@@ -4,6 +4,7 @@ CRM e controle financeiro do **Mentha Nail Design** em um único arquivo (`index
 
 ## O que tem
 
+- Tema claro com detalhes em verde.
 - **Painel** no modelo da aba Outubro.26: meta do mês, quanto falta, total bruto faturado, total de gastos e total líquido, além de próximos atendimentos, clientes que precisam reagendar, contas pendentes, aniversariantes e dízimo sugerido.
 - **Agenda**: agendar, concluir com forma de pagamento, lembrete pronto no WhatsApp e sincronização com a Google Agenda.
 - **Receitas**: tabela igual à da planilha (Data, Cliente, Procedimento, Valor, Adicional, Pagamento, Total, Descrição). Taxa de crédito (3,09%) e débito (0,89%) descontadas automaticamente.
@@ -22,19 +23,21 @@ CRM e controle financeiro do **Mentha Nail Design** em um único arquivo (`index
 
 ## Trazer os dados da planilha
 
-No Google Sheets, abra a aba e use **Arquivo → Fazer download → .csv**. Depois, no app, vá em **Config → Importar**:
+O app lê direto a planilha **Controle Financeiro - Unhas** pela sua conta Google (somente leitura, nada é alterado nela):
 
-- **Clientes**: aba `Clientes` (ou `Todas Clientes`).
-- **Atendimentos e despesas**: uma aba mensal (ex.: `Outubro.26`), com o mês selecionado no topo do app igual ao da aba. Também aceita `db_receitas` (só atendimentos).
+1. Configure o Client ID do Google (passo a passo abaixo). Ative também a **Google Sheets API** no projeto.
+2. Em **Config → Planilha Google**, clique em **Conectar e ver abas**.
+3. Marque as abas e clique em **Importar abas selecionadas**. Os clientes vêm da aba `Clientes`; atendimentos, despesas e metas vêm das abas mensais (`Outubro.26`, `Setembro.26`…).
+4. No dia a dia, o botão **↻ Planilha** no Painel puxa de novo os clientes e a aba do mês selecionado.
 
-Lançamentos repetidos são ignorados, então pode reimportar sem medo.
+Lançamentos repetidos são ignorados, então pode sincronizar quantas vezes quiser. Sem login do Google, também dá para importar abas baixadas em `.csv` em **Config → Importar arquivo CSV**.
 
 ## Conectar a Google Agenda
 
 Sem configurar nada, o botão 📅 de cada atendimento já abre o evento preenchido na Google Agenda. Para sincronizar automaticamente:
 
 1. Em [console.cloud.google.com](https://console.cloud.google.com/), crie um projeto.
-2. **APIs e serviços → Biblioteca** → ative a **Google Calendar API**.
+2. **APIs e serviços → Biblioteca** → ative a **Google Calendar API** e a **Google Sheets API**.
 3. **Tela de consentimento OAuth** → Externo → adicione seu e-mail em *Usuários de teste*.
 4. **Credenciais → Criar credenciais → ID do cliente OAuth → Aplicativo da Web**. Em *Origens JavaScript autorizadas* coloque `https://SEU-USUARIO.github.io`.
 5. Copie o Client ID e cole em **Config → Google Agenda** no app. Depois, **Entrar com Google**.
