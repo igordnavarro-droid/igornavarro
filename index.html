@@ -210,6 +210,103 @@ code{background:var(--surface2);padding:1px 5px;border-radius:5px;font-size:12.5
 @media(max-width:820px){.logo-img{height:34px}.logo-tag{display:none}}
 ol.steps{padding-left:18px;margin:6px 0}ol.steps li{margin-bottom:6px;font-size:13.5px}
 @media(max-width:820px){.kpis{grid-template-columns:1fr 1fr;gap:10px}.kpi{padding:12px}.kpi .v{font-size:19px}.kpi .s{font-size:11.5px}}
+
+/* ===================== MOBILE ===================== */
+header.top{padding-top:env(safe-area-inset-top)}
+body.noscroll{overflow:hidden}
+.cm-dots{display:none}
+@media(max-width:760px){
+ input,select,textarea,.tinput,.rfilters input,.rfilters select{font-size:16px!important}
+ .toolbar{gap:8px}.toolbar h2{font-size:23px;flex:1 1 auto}
+ .btn{min-height:40px}.btn.sm{min-height:36px;padding:6px 11px;font-size:13.5px}
+ .chip{min-height:36px;padding:7px 13px;font-size:13.5px}
+ button.pill{padding:7px 12px;font-size:13px;min-height:32px}
+ .profbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-12px;padding-right:12px}.profbar::-webkit-scrollbar{display:none}
+ .profbar .chip{flex:0 0 auto}
+ .chips{gap:8px}
+ /* agenda */
+ .calbar{gap:6px}
+ .seg button{min-height:36px}
+ .calbar .seg{width:100%;order:9}.calbar .seg button{flex:1;padding:9px 0}
+ .calbar>input[type=date]{flex:1;min-width:150px}
+ .btn.icon{width:40px;min-height:38px}
+ .appt{padding:12px;gap:8px 12px}
+ .appt .acts{flex-basis:100%;justify-content:flex-end;gap:8px}
+ .appt .acts .btn{min-height:38px}
+ .cm-cell{min-height:64px;padding:3px 1px;gap:3px;align-items:center}
+ .cm-cell .ev-chip,.cm-cell .cm-more{display:none}
+ .cm-dots{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;max-width:40px}
+ .cm-dots i{width:7px;height:7px;border-radius:50%;background:var(--pc,var(--brand))}
+ .cm-dots i.g{background:transparent;border:1.5px solid var(--pc,var(--g))}
+ .cm-dots i.r{opacity:.45}
+ .cm-n{font-size:10.5px;color:var(--muted);font-weight:600;line-height:1}
+ .cm-day{width:30px;height:30px;font-size:13.5px}
+ .tg-dh{padding:6px 0}.tg-dh b{width:34px;height:34px;font-size:17px}
+ /* modais como "folha" de baixo */
+ #modal{padding:0;align-items:flex-end;overflow:hidden}
+ .mbox,.mbox.wide{max-width:none;width:100%;border-radius:20px 20px 0 0;max-height:94vh;max-height:94dvh;display:flex;flex-direction:column;margin:0;animation:sheet .22s ease-out}
+ .mhead{padding:14px 16px;flex:0 0 auto;position:relative}
+ .mhead:before{content:'';position:absolute;top:6px;left:50%;width:40px;height:4px;border-radius:9px;background:var(--line);transform:translateX(-50%)}
+ .mhead h3{font-size:19px;padding-right:8px}
+ .mhead .x{width:40px;height:40px;font-size:20px;margin-right:-8px}
+ .mbody{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;flex:1 1 auto;padding:14px 16px}
+ .mfoot{flex:0 0 auto;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--surface);box-shadow:0 -4px 14px rgba(10,60,45,.06)}
+ .mfoot>span[style*="flex:1"]{display:none}
+ .mfoot .btn{flex:1 1 auto;justify-content:center}
+ .row{grid-template-columns:1fr 1fr;gap:8px}
+ .irow{grid-template-columns:1fr 96px 44px}
+ .kpis .kpi .v{word-break:break-word}
+ .rfilters{gap:10px}.rfilters label{flex:1 1 45%}.rfilters label:has(.seg){flex:1 1 100%}.rfilters .seg{width:100%}.rfilters .seg button{flex:1}
+ .rfilters input,.rfilters select{width:100%}
+ .toast{max-width:calc(100vw - 32px)}
+}
+@media(max-width:900px){
+ /* tabelas viram cartões */
+ .tw:has(table.rt){background:transparent;border:0;box-shadow:none;padding:0;overflow:visible}
+ .card.tw>h3{padding:0 2px}
+ table.rt thead{display:none}
+ table.rt,table.rt tbody,table.rt tfoot,table.rt tr,table.rt td{display:block;width:100%}
+ table.rt tr{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
+ table.rt tr.click:active{background:var(--surface2)}
+ table.rt tr.click:hover td{background:transparent}
+ table.rt td{border:0;padding:5px 0;display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:right;min-height:28px;white-space:normal}
+ table.rt td::before{content:attr(data-label);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;text-align:left;flex:0 0 auto;max-width:45%}
+ table.rt td[data-label=""]::before{display:none}
+ table.rt td:empty{display:none}
+ table.rt td:first-child{font-size:15.5px;font-weight:700;text-align:left;justify-content:flex-start;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:4px}
+ table.rt td:first-child::before{display:none}
+ table.rt td:first-child>*{text-align:left}
+ table.rt tfoot tr{background:var(--brand-soft);border-color:transparent}
+ table.rt tfoot td:first-child{border-bottom-color:#C6EAD9}
+ table.rt td .tinput,table.rt td>select,table.rt td>input:not([type=checkbox]){width:62%!important;max-width:62%;flex:0 0 auto}
+ table.rt td:first-child .tinput,table.rt td:first-child>input{width:100%!important;max-width:100%}
+ table.rt tr td:last-child:has(> .btn){justify-content:flex-end}
+ table.rt .empty{text-align:center;justify-content:center}
+}
+@media(min-width:601px) and (max-width:900px){
+ table.rt tbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+ table.rt tbody tr{margin:0}
+ table.rt tfoot tr{margin-top:12px}
+ table.rt tbody tr:has(td.empty){grid-column:1/-1}
+}
+@media(pointer:coarse){
+ input,select,textarea,.tinput,.rfilters input,.rfilters select{font-size:16px!important}
+ .btn{min-height:40px}.btn.sm{min-height:36px}
+ .chip{min-height:36px}.seg button{min-height:36px}
+ button.pill{min-height:32px;padding:6px 12px}
+ .mhead .x{width:40px;height:40px}
+ .cm-day{width:30px;height:30px}
+ .cm-more{min-height:30px;padding:4px 6px}
+ .ev-chip{padding:4px 7px}
+}
+@keyframes sheet{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@media(max-width:380px){
+ .toolbar h2{font-size:21px}
+ .kpi .v{font-size:17px!important}
+ .month span{min-width:92px;font-size:12.5px}
+ .logo-img{height:30px}
+ .irow{grid-template-columns:1fr 84px 42px}
+}
 </style>
 </head>
 <body>
@@ -322,14 +419,15 @@ const ppill=n=>`<span class="ppill" style="${pstyle(n)}">${esc(n)}</span>`;
 function setProf(v){prof=v;try{localStorage.setItem('mentha_prof',v)}catch(e){}render()}
 function profBar(note){return`<div class="profbar"><span class="lbl">Profissional:</span><button class="chip ${!prof?'on':''}" onclick="setProf('')">Todas</button>${PROFS().map(p=>`<button class="chip pchip ${prof===p.nome?'on':''}" style="${pstyle(p.nome)}" onclick="setProf('${esc(p.nome)}')"><i></i>${esc(p.nome)}</button>`).join('')}${prof&&note?`<span class="small muted">${note}</span>`:''}</div>`}
 const gx=v=>prof?'<span class="muted" title="Despesas são do estúdio todo">—</span>':BRL(v);
+function labelTables(root){(root||document).querySelectorAll('table').forEach(t=>{const ths=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());if(!ths.length)return;t.classList.add('rt');t.querySelectorAll('tbody tr,tfoot tr').forEach(tr=>{let i=0;[...tr.children].forEach(td=>{if(!td.hasAttribute('data-label'))td.setAttribute('data-label',td.colSpan>1?'':(ths[i]||''));i+=td.colSpan||1})})})}
 /* ================= modal ================= */
 function modal(title,body,{onSave,saveLabel='Salvar',wide=false,extra=''}={}){
  const m=$('modal');
  m.innerHTML=`<div class="mbox ${wide?'wide':''}"><div class="mhead"><h3>${title}</h3><button class="x" onclick="closeModal()" aria-label="Fechar">✕</button></div><div class="mbody">${body}</div>${onSave||extra?`<div class="mfoot">${extra}<span style="flex:1"></span>${onSave?`<button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" id="mSave">${saveLabel}</button>`:''}</div>`:''}</div>`;
- m.classList.add('open');if(onSave)$('mSave').onclick=onSave;
+ m.classList.add('open');document.body.classList.add('noscroll');labelTables(m);if(onSave)$('mSave').onclick=onSave;
  m.onclick=e=>{if(e.target===m)closeModal()};
 }
-function closeModal(){$('modal').classList.remove('open');$('modal').innerHTML=''}
+function closeModal(){$('modal').classList.remove('open');$('modal').innerHTML='';document.body.classList.remove('noscroll')}
 const opts=(arr,sel)=>arr.map(o=>`<option ${o===sel?'selected':''}>${esc(o)}</option>`).join('');
 
 /* ================= render geral ================= */
@@ -339,6 +437,7 @@ function render(){
  charts.forEach(c=>c.destroy());charts=[];
  const v=$('view');
  ({painel:rPainel,agenda:rAgenda,receitas:rReceitas,despesas:rDespesas,clientes:rClientes,servicos:rServicos,relatorios:rRelatorios,config:rConfig})[tab](v);
+ labelTables(v);
 }
 function go(t){tab=t;render();window.scrollTo(0,0)}
 const kpi=(l,v,s='',color='')=>`<div class="card kpi"><div class="l">${l}</div><div class="v" ${color?`style="color:${color}"`:''}>${v}</div>${s?`<div class="s">${s}</div>`:''}</div>`;
@@ -460,7 +559,7 @@ function evChip(x){if(x.a){const a=x.a;return`<div class="ev-chip ${a.status} ${
 function calMonth(f){const m=agDate.slice(0,7),td=todayISO();const L=agItems(f,addD(f,41));const by={};L.forEach(x=>(by[x.data]=by[x.data]||[]).push(x));const mx=innerWidth<760?2:3;
  let o=`<div class="cal-month"><div class="cm-head">${DOW.map(d=>`<div>${d}</div>`).join('')}</div><div class="cm-grid">`;
  for(let i=0;i<42;i++){const d=addD(f,i),arr=by[d]||[];
-  o+=`<div class="cm-cell ${d.slice(0,7)!==m?'out':''} ${d===td?'today':''}" onclick="apptForm(null,{data:'${d}'})"><button class="cm-day" onclick="event.stopPropagation();agDate='${d}';agSet('dia')">${+d.slice(8)}</button>${arr.slice(0,mx).map(evChip).join('')}${arr.length>mx?`<button class="cm-more" onclick="event.stopPropagation();agDate='${d}';agSet('dia')">+${arr.length-mx} mais</button>`:''}<div class="cm-fill"></div></div>`}
+  o+=`<div class="cm-cell ${d.slice(0,7)!==m?'out':''} ${d===td?'today':''}" onclick="if(innerWidth<760){agDate='${d}';agSet('dia')}else apptForm(null,{data:'${d}'})"><button class="cm-day" onclick="event.stopPropagation();agDate='${d}';agSet('dia')">${+d.slice(8)}</button><div class="cm-dots">${arr.slice(0,8).map(x=>`<i class="${x.g?'g':''} ${x.a&&x.a.status!=='agendado'?'r':''}" style="${pstyle(x.a?pf(x.a):(x.g._prof||''))}"></i>`).join('')}</div>${arr.length?`<span class="cm-dots cm-n" style="max-width:none">${arr.length}</span>`:''}${arr.slice(0,mx).map(evChip).join('')}${arr.length>mx?`<button class="cm-more" onclick="event.stopPropagation();agDate='${d}';agSet('dia')">+${arr.length-mx} mais</button>`:''}<div class="cm-fill"></div></div>`}
  return o+'</div></div>'}
 function layout(evs){evs.sort((a,b)=>a.ini-b.ini||b.dur-a.dur);let cl=[],end=-1;const out=[];const flush=()=>{const lanes=[];cl.forEach(x=>{let l=lanes.findIndex(e=>e<=x.ini);if(l<0){l=lanes.length;lanes.push(0)}lanes[l]=x.ini+x.dur;x.lane=l});cl.forEach(x=>x.lanes=lanes.length);out.push(...cl);cl=[]};evs.forEach(x=>{if(cl.length&&x.ini>=end)flush();cl.push(x);end=Math.max(end,x.ini+x.dur)});if(cl.length)flush();return out}
 function calGrid(days){const td=todayISO(),one=days.length===1;const L=agItems(days[0],days[days.length-1]);
@@ -481,7 +580,7 @@ function slotClick(e,d,H0){const r=e.currentTarget.getBoundingClientRect();const
 function apptCard(a){
  const c=client(a.clientId)||{},st=STATUS[a.status]||['?',''];
  const w=waLink(c.telefone,`Oi ${cname(a).split(' ')[0]}! 🌿 Passando para confirmar seu horário ${dow(a.data)}, ${fds(a.data)} às ${a.hora||''} no Mentha Nail Design (${servs(a)}). Posso confirmar? 💅`);
- return`<div class="appt ${a.status}" style="${pstyle(pf(a))}"><div class="time">${a.hora||'--:--'}</div><div class="who"><b>${esc(cname(a))} ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️ alergia</span>':''}${c.gestante?' <span class="pill warn">gestante</span>':''}${c.diabetes?' <span class="pill warn">diabetes</span>':''}</b><span class="small muted">${esc(servs(a))} · ${BRL(tot(a))}${a.gcalId?' · <span style="color:var(--g)">● Google</span>':''}</span></div><span class="pill ${st[1]}">${st[0]}</span><div class="acts">${a.status==='agendado'?`<button class="btn sm" onclick="concluir('${a.id}')">✓ Concluir</button>${w?`<a class="btn sm soft" target="_blank" href="${w}">Lembrete</a>`:''}${!a.gcalId?`<a class="btn sm ghost" target="_blank" href="${gTemplate(a)}" title="Adicionar no Google Agenda">📅</a>`:''}`:''}<button class="btn sm ghost" onclick="apptForm('${a.id}')">✎</button></div></div>`;
+ return`<div class="appt ${a.status}" style="${pstyle(pf(a))}"><div class="time">${a.hora||'<span class="small muted" style="font-weight:600">sem<br>hora</span>'}</div><div class="who"><b>${esc(cname(a))} ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️ alergia</span>':''}${c.gestante?' <span class="pill warn">gestante</span>':''}${c.diabetes?' <span class="pill warn">diabetes</span>':''}</b><span class="small muted">${esc(servs(a))} · ${BRL(tot(a))}${a.gcalId?' · <span style="color:var(--g)">● Google</span>':''}</span></div><span class="pill ${st[1]}">${st[0]}</span><div class="acts">${a.status==='agendado'?`<button class="btn sm" onclick="concluir('${a.id}')">✓ Concluir</button>${w?`<a class="btn sm soft" target="_blank" href="${w}">Lembrete</a>`:''}${!a.gcalId?`<a class="btn sm ghost" target="_blank" href="${gTemplate(a)}" title="Adicionar no Google Agenda">📅</a>`:''}`:''}<button class="btn sm ghost" onclick="apptForm('${a.id}')">✎ Editar</button></div></div>`;
 }
 function gCard(x){const e=x.g;return`<div class="appt gcal"><div class="time">${x.ini!=null?fromMin(x.ini):'dia'}</div><div class="who"><b>${esc(e.summary||'(sem título)')}</b><span class="small muted">Evento da Google Agenda</span></div><div class="acts"><button class="btn sm soft" onclick="importGEvent('${e.id}')">Importar</button></div></div>`}
 function concluir(id){const a=db.appts.find(x=>x.id===id);modal('Concluir atendimento',`<p style="margin-top:0"><b>${esc(cname(a))}</b><br><span class="muted">${esc(servs(a))} · ${BRL(tot(a))}</span></p><label class="f">Forma de pagamento<select id="cPg">${opts(PAGS,a.pagamento||'Pix')}</select></label><label class="f">Adicional / desconto (R$, use negativo para desconto)<input id="cAd" type="number" step="0.01" value="${a.adicional||0}"></label>`,{saveLabel:'✓ Concluir',onSave:()=>{a.pagamento=$('cPg').value;a.adicional=+$('cAd').value||0;a.status='realizado';if(a.gcalId&&!a.gLinked){a.gPending=true;if(gReady())syncAppt(a,true)}save();closeModal();render();toast('Concluído · recebido '+BRL(rec(a)))}})}
@@ -538,7 +637,7 @@ function delAppt(id){const a=db.appts.find(x=>x.id===id);if(!confirm('Excluir es
 function rReceitas(v){
  const s=stats(cur),q=norm(rcQuery);
  let L=s.ap.slice().sort(byDT);if(q)L=L.filter(a=>norm(cname(a)+' '+servs(a)+' '+a.pagamento).includes(q));
- v.innerHTML=`<div class="toolbar"><h2>Receitas</h2><input style="max-width:220px" placeholder="🔍 Filtrar" value="${esc(rcQuery)}" oninput="rcQuery=this.value;clearTimeout(window._rq);window._rq=setTimeout(()=>{render();const i=document.querySelector('.toolbar input');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"><button class="btn" onclick="apptForm(null,{status:'realizado',pagamento:'Pix'})">+ Lançamento</button></div>
+ v.innerHTML=`<div class="toolbar"><h2>Receitas</h2><input style="max-width:220px;flex:1 1 140px" placeholder="🔍 Filtrar" value="${esc(rcQuery)}" oninput="rcQuery=this.value;clearTimeout(window._rq);window._rq=setTimeout(()=>{render();const i=document.querySelector('.toolbar input');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"><button class="btn" onclick="apptForm(null,{status:'realizado',pagamento:'Pix'})">+ Lançamento</button></div>
  ${profBar()}
  <div class="kpis sect">${kpi('Total bruto faturado',BRL(s.fat),s.fromHist?'histórico da planilha':`${s.n} atendimentos`)}${Object.entries(s.porPag).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,val])=>kpi(k,BRL(val),s.fat?(val/s.fat*100).toFixed(0)+'%':'')).join('')}</div>
  <div class="card tw">${L.length?`<table><thead><tr><th>Data</th><th>Cliente</th><th>Procedimento</th><th class="num">Valor</th><th class="num">Adicional</th><th>Profissional</th><th>Pagamento</th><th class="num">Recebido</th><th>Descrição</th></tr></thead><tbody>${L.map(a=>`<tr class="click" onclick="apptForm('${a.id}')"><td>${fds(a.data)}</td><td>${esc(cname(a))}</td><td>${esc(servs(a))}</td><td class="num">${BRL(tot(a)-(+a.adicional||0))}</td><td class="num">${a.adicional?BRL(a.adicional):''}</td><td>${ppill(pf(a))}</td><td>${esc(a.pagamento||'')}</td><td class="num"><b>${BRL(rec(a))}</b></td><td class="small muted">${esc(a.descricao||'')}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="7">Total</td><td class="num">${BRL(L.reduce((t,a)=>t+rec(a),0))}</td><td></td></tr></tfoot></table>`:'<div class="empty">Nenhuma receita lançada neste mês.</div>'}</div>`;
@@ -569,7 +668,7 @@ function genFixed(){let n=0;db.fixed.filter(f=>f.ativo).forEach(f=>{let desc=f.d
 function lancarDizimo(){const s=stats(cur),val=Math.round(s.fat*(+db.settings.dizimoPct||0))/100;if(!val)return toast('Sem faturamento no mês');let e=db.expenses.find(x=>x.dizimo&&x.mes===cur);if(e)e.valor=val;else db.expenses.push({id:uid(),dizimo:true,mes:cur,descricao:'Dízimo',valor:val,data:'',status:'Pendente',tipo:'Despesas fixas',meio:'À vista'});save();render();toast('Dízimo: '+BRL(val))}
 function fixedManager(){
  const row=f=>`<tr data-id="${f.id||''}"><td><input class="tinput fD" value="${esc(f.descricao||'')}"></td><td><input class="tinput fV" type="number" step="0.01" value="${f.valor||''}" style="width:100px"></td><td><select class="tinput fT">${opts(TIPOS,f.tipo)}</select></td><td><select class="tinput fM">${opts(MEIOS,f.meio)}</select></td><td><input class="tinput fDia" type="number" min="1" max="31" value="${f.dia||''}" style="width:60px"></td><td><input class="tinput fP" type="number" min="0" value="${f.parcelas||''}" style="width:60px" placeholder="—"></td><td><input class="tinput fI" type="month" value="${f.inicio||''}"></td><td><input type="checkbox" class="fA" ${f.ativo!==false?'checked':''}></td><td><button class="btn ghost sm" onclick="this.closest('tr').remove()">✕</button></td></tr>`;
- modal('Despesas fixas e parcelamentos',`<div class="small muted" style="margin-bottom:8px">Usadas pelo botão “Gerar fixas do mês”. Para parcelados (ex.: empréstimo), informe nº de parcelas e o mês da 1ª parcela.</div><div class="tw"><table><thead><tr><th>Descrição</th><th>Valor</th><th>Tipo</th><th>Meio</th><th>Dia</th><th>Parc.</th><th>1ª parcela</th><th>Ativa</th><th></th></tr></thead><tbody id="fxB">${db.fixed.map(row).join('')}</tbody></table></div><button class="btn sm soft" style="margin-top:10px" onclick="$('fxB').insertAdjacentHTML('beforeend',window._fxRow({tipo:'Despesas fixas',meio:'À vista'}))">+ linha</button>`,
+ modal('Despesas fixas e parcelamentos',`<div class="small muted" style="margin-bottom:8px">Usadas pelo botão “Gerar fixas do mês”. Para parcelados (ex.: empréstimo), informe nº de parcelas e o mês da 1ª parcela.</div><div class="tw"><table><thead><tr><th>Descrição</th><th>Valor</th><th>Tipo</th><th>Meio</th><th>Dia</th><th>Parc.</th><th>1ª parcela</th><th>Ativa</th><th></th></tr></thead><tbody id="fxB">${db.fixed.map(row).join('')}</tbody></table></div><button class="btn sm soft" style="margin-top:10px" onclick="$('fxB').insertAdjacentHTML('beforeend',window._fxRow({tipo:'Despesas fixas',meio:'À vista'}));labelTables($('modal'))">+ linha</button>`,
  {wide:true,onSave:()=>{db.fixed=[...document.querySelectorAll('#fxB tr')].map(tr=>({id:tr.dataset.id||uid(),descricao:tr.querySelector('.fD').value.trim(),valor:+tr.querySelector('.fV').value||0,tipo:tr.querySelector('.fT').value,meio:tr.querySelector('.fM').value,dia:+tr.querySelector('.fDia').value||1,parcelas:+tr.querySelector('.fP').value||0,inicio:tr.querySelector('.fI').value,ativo:tr.querySelector('.fA').checked})).filter(f=>f.descricao);save();closeModal();render();toast('Despesas fixas salvas')}});
  window._fxRow=row;
 }
@@ -592,7 +691,7 @@ function drawClients(){
  if(clFilter==='reagendar'){const s=new Set(needSchedule(cs).map(x=>x.c.id));L=L.filter(c=>s.has(c.id))}
  if(clFilter==='aniv')L=L.filter(c=>c.nascimento&&c.nascimento.slice(5,7)===cur.slice(5));
  L.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
- $('cl').innerHTML=L.length?`<table><thead><tr><th>Nome</th><th>Contato</th><th>Última visita</th><th>Próximo</th><th class="num">Visitas</th><th class="num">Total gasto</th><th>Status</th></tr></thead><tbody>${L.map(c=>{const s=cs[c.id]||{};const w=waLink(c.telefone);return`<tr class="click" onclick="clientView('${c.id}')"><td><b>${esc(c.nome)}</b> ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️</span>':''}${c.instagram?`<div class="small muted">${esc(c.instagram)}</div>`:''}</td><td>${w?`<a href="${w}" target="_blank" onclick="event.stopPropagation()">${esc(c.telefone)}</a>`:esc(c.telefone||'')}</td><td>${s.last?`${fd(s.last)}${dDiff(s.last,td)>=0?`<div class="small muted">há ${dDiff(s.last,td)} dia${dDiff(s.last,td)===1?'':'s'}</div>`:''}`:'<span class="muted">—</span>'}</td><td>${s.future?`<span class="pill pink">${fds(s.future)}</span>`:''}</td><td class="num">${s.n||0}</td><td class="num">${BRL(s.total||0)}</td><td><span class="pill ${c.status==='Inativa'?'':'ok'}">${c.status||'Ativa'}</span></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Nenhuma cliente encontrada.</div>';
+ setTimeout(()=>labelTables($('cl')));$('cl').innerHTML=L.length?`<table><thead><tr><th>Nome</th><th>Contato</th><th>Última visita</th><th>Próximo</th><th class="num">Visitas</th><th class="num">Total gasto</th><th>Status</th></tr></thead><tbody>${L.map(c=>{const s=cs[c.id]||{};const w=waLink(c.telefone);return`<tr class="click" onclick="clientView('${c.id}')"><td><b>${esc(c.nome)}</b> ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️</span>':''}${c.instagram?`<div class="small muted">${esc(c.instagram)}</div>`:''}</td><td>${w?`<a href="${w}" target="_blank" onclick="event.stopPropagation()">${esc(c.telefone)}</a>`:esc(c.telefone||'')}</td><td>${s.last?`${fd(s.last)}${dDiff(s.last,td)>=0?`<div class="small muted">há ${dDiff(s.last,td)} dia${dDiff(s.last,td)===1?'':'s'}</div>`:''}`:'<span class="muted">—</span>'}</td><td>${s.future?`<span class="pill pink">${fds(s.future)}</span>`:''}</td><td class="num">${s.n||0}</td><td class="num">${BRL(s.total||0)}</td><td><span class="pill ${c.status==='Inativa'?'':'ok'}">${c.status||'Ativa'}</span></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Nenhuma cliente encontrada.</div>';
 }
 function clientForm(id){
  const c=id?client(id):newClient({});
@@ -631,7 +730,7 @@ function rServicos(v){
  const y=cur.slice(0,4),cnt={};db.appts.filter(a=>a.status==='realizado'&&a.data.startsWith(y)).forEach(a=>(a.items||[]).forEach(i=>{cnt[i.servico]=cnt[i.servico]||{n:0,v:0};cnt[i.servico].n++;cnt[i.servico].v+=+i.valor||0}));
  const row=s=>`<tr data-id="${s.id||''}"><td><input class="tinput sN" value="${esc(s.nome||'')}"></td><td><input class="tinput sC" value="${esc(s.categoria||'')}" style="width:110px"></td><td><input class="tinput sP" type="number" step="0.01" value="${s.preco??''}" style="width:95px"></td><td><input class="tinput sD" type="number" value="${s.duracao??''}" style="width:75px"></td><td class="num small muted">${cnt[s.nome]?cnt[s.nome].n+'× · '+BRL(cnt[s.nome].v):''}</td><td><input type="checkbox" class="sA" ${s.ativo!==false?'checked':''}></td><td><button class="btn ghost sm" onclick="this.closest('tr').remove()">✕</button></td></tr>`;
  window._svRow=row;
- v.innerHTML=`<div class="toolbar"><h2>Serviços e preços</h2><button class="btn soft" onclick="$('svB').insertAdjacentHTML('beforeend',window._svRow({ativo:true}))">+ Serviço</button><button class="btn" onclick="saveServices()">Salvar alterações</button></div>
+ v.innerHTML=`<div class="toolbar"><h2>Serviços e preços</h2><button class="btn soft" onclick="$('svB').insertAdjacentHTML('beforeend',window._svRow({ativo:true}));labelTables($('view'))">+ Serviço</button><button class="btn" onclick="saveServices()">Salvar alterações</button></div>
  <div class="card tw"><table><thead><tr><th>Serviço</th><th>Categoria</th><th>Preço (R$)</th><th>Duração (min)</th><th class="num">Realizados em ${y}</th><th>Ativo</th><th></th></tr></thead><tbody id="svB">${db.services.map(row).join('')}</tbody></table>
  <div class="small muted" style="margin-top:10px">A duração define o tamanho do evento na Google Agenda. Para mudar o preço de um serviço, altere aqui — atendimentos antigos mantêm o valor cobrado.</div></div>`;
 }
