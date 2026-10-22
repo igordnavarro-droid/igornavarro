@@ -220,6 +220,49 @@ code{background:var(--surface2);padding:1px 5px;border-radius:5px;font-size:12.5
 .sync-st.run i{display:inline-block;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 .sync-st+.month{margin-left:8px}
 @media(max-width:760px){.sync-st span{display:none}.sync-st{padding:6px 9px;min-width:38px;justify-content:center;flex:0 0 auto}.sync-st.warn{position:relative}.sync-st.warn:after{content:'';position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#E5484D}}
+
+/* ===== visão cartões/tabela + ordenação ===== */
+ /* tabelas viram cartões */
+ .tw:has(table.rt-force){background:transparent;border:0;box-shadow:none;padding:0;overflow:visible}
+ .card.tw>h3{padding:0 2px}
+ table.rt-force thead{display:none}
+ table.rt-force,table.rt-force tbody,table.rt-force tfoot,table.rt-force tr,table.rt-force td{display:block;width:100%}
+ table.rt-force tr{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
+ table.rt-force tr.click:active{background:var(--surface2)}
+ table.rt-force tr.click:hover td{background:transparent}
+ table.rt-force td{border:0;padding:5px 0;display:flex;justify-content:space-between;align-items:center;gap:14px;text-align:right;min-height:28px;white-space:normal}
+ table.rt-force td::before{content:attr(data-label);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;text-align:left;flex:0 0 auto;max-width:45%}
+ table.rt-force td[data-label=""]::before{display:none}
+ table.rt-force td:empty{display:none}
+ table.rt-force td:first-child{font-size:15.5px;font-weight:700;text-align:left;justify-content:flex-start;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:4px}
+ table.rt-force td:first-child::before{display:none}
+ table.rt-force td:first-child>*{text-align:left}
+ table.rt-force tfoot tr{background:var(--brand-soft);border-color:transparent}
+ table.rt-force tfoot td:first-child{border-bottom-color:#C6EAD9}
+ table.rt-force td .tinput,table.rt-force td>select,table.rt-force td>input:not([type=checkbox]){width:62%!important;max-width:62%;flex:0 0 auto}
+ table.rt-force td:first-child .tinput,table.rt-force td:first-child>input{width:100%!important;max-width:100%}
+ table.rt-force tr td:last-child:has(> .btn){justify-content:flex-end}
+ table.rt-force .empty{text-align:center;justify-content:center}
+
+table.rt-force tbody{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;align-items:start}
+table.rt-force tbody tr{margin:0}
+table.rt-force tfoot tr{margin-top:12px}
+table.rt-force tbody tr:has(td.empty){grid-column:1/-1}
+.viewbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 10px}
+.viewbar .seg button{display:inline-flex;align-items:center;gap:5px}
+.viewbar .sortsel{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600}
+.viewbar .sortsel select{width:auto;padding:6px 8px;font-size:13.5px}
+.viewbar .count{margin-left:auto;font-size:12.5px;color:var(--muted)}
+th.sortable{cursor:pointer;user-select:none;white-space:nowrap;transition:color .15s}
+th.sortable:hover{color:var(--brand-ink);background:var(--brand-soft)}
+th.sortable i{font-style:normal;margin-left:4px;opacity:.3;font-size:11px}
+th.sortable.on{color:var(--brand-ink)}th.sortable.on i{opacity:1}
+table.no-rt th:first-child,table.no-rt td:first-child{position:sticky;left:0;z-index:1;background:var(--surface);box-shadow:1px 0 0 var(--line)}
+table.no-rt thead th:first-child{background:var(--surface2)}
+table.no-rt tr.click:hover td:first-child{background:var(--surface2)}
+table.no-rt td{white-space:nowrap}table.no-rt td.wrap{white-space:normal;min-width:140px}
+.swipe-hint{display:none}
+@media(max-width:760px){table.no-rt th:first-child,table.no-rt td:first-child{max-width:132px;min-width:96px;white-space:normal;word-break:break-word}table.no-rt{font-size:13.5px}table.no-rt td,table.no-rt th{padding:8px 7px}.swipe-hint{display:block;font-size:12px;color:var(--muted);margin:-4px 0 8px}.viewbar .count{margin-left:0;width:100%}}
 ol.steps{padding-left:18px;margin:6px 0}ol.steps li{margin-bottom:6px;font-size:13.5px}
 @media(max-width:820px){.kpis{grid-template-columns:1fr 1fr;gap:10px}.kpi{padding:12px}.kpi .v{font-size:19px}.kpi .s{font-size:11.5px}}
 
@@ -442,7 +485,22 @@ const ppill=n=>`<span class="ppill" style="${pstyle(n)}">${esc(n)}</span>`;
 function setProf(v){prof=v;try{localStorage.setItem('mentha_prof',v)}catch(e){}render()}
 function profBar(note){return`<div class="profbar"><span class="lbl">Profissional:</span><button class="chip ${!prof?'on':''}" onclick="setProf('')">Todas</button>${PROFS().map(p=>`<button class="chip pchip ${prof===p.nome?'on':''}" style="${pstyle(p.nome)}" onclick="setProf('${esc(p.nome)}')"><i></i>${esc(p.nome)}</button>`).join('')}${prof&&note?`<span class="small muted">${note}</span>`:''}</div>`}
 const gx=v=>prof?'<span class="muted" title="Despesas são do estúdio todo">—</span>':BRL(v);
-function labelTables(root){(root||document).querySelectorAll('table').forEach(t=>{const ths=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());if(!ths.length)return;t.classList.add('rt');t.querySelectorAll('tbody tr,tfoot tr').forEach(tr=>{let i=0;[...tr.children].forEach(td=>{if(!td.hasAttribute('data-label'))td.setAttribute('data-label',td.colSpan>1?'':(ths[i]||''));i+=td.colSpan||1})})})}
+function labelTables(root){(root||document).querySelectorAll('table').forEach(t=>{const ths=[...t.querySelectorAll('thead th')].map(th=>th.textContent.replace(/[▲▼↕]/g,'').trim());if(!ths.length)return;if(t.classList.contains('no-rt'))return;t.classList.add('rt');if(t.classList.contains('force-rt'))t.classList.add('rt-force');t.querySelectorAll('tbody tr,tfoot tr').forEach(tr=>{let i=0;[...tr.children].forEach(td=>{if(!td.hasAttribute('data-label'))td.setAttribute('data-label',td.colSpan>1?'':(ths[i]||''));i+=td.colSpan||1})})})}
+
+/* ===== visão (cartões/tabela) e ordenação por coluna ===== */
+const VIEWS=(()=>{try{return JSON.parse(localStorage.getItem('mentha_views'))||{}}catch(e){return{}}})();
+const SORTS=(()=>{try{return JSON.parse(localStorage.getItem('mentha_sorts'))||{}}catch(e){return{}}})();
+function viewOf(k){return VIEWS[k]||(innerWidth<=900?'cards':'table')}
+function setView(k,v){VIEWS[k]=v;try{localStorage.setItem('mentha_views',JSON.stringify(VIEWS))}catch(e){}render()}
+function sortOf(k,def){return SORTS[k]||def}
+function setSort(k,col,num){const s=SORTS[k]||{};SORTS[k]=s.k===col?{k:col,d:-s.d}:{k:col,d:num?-1:1};try{localStorage.setItem('mentha_sorts',JSON.stringify(SORTS))}catch(e){}render()}
+function setSortDir(k,col){const s=SORTS[k]||{k:col,d:1};SORTS[k]={k:s.k||col,d:-s.d};try{localStorage.setItem('mentha_sorts',JSON.stringify(SORTS))}catch(e){}render()}
+function sortRows(L,cols,st){const c=cols[st.k];if(!c)return L;return L.slice().sort((x,y)=>{const a=c.v(x),b=c.v(y),ea=a===''||a==null,eb=b===''||b==null;if(ea||eb)return ea&&eb?0:ea?1:-1;const r=(typeof a==='number'&&typeof b==='number')?a-b:String(a).localeCompare(String(b),'pt-BR',{numeric:true,sensitivity:'base'});return r*st.d})}
+function sth(k,cols,st,col,cls){const c=cols[col],on=st.k===col;return`<th class="sortable ${cls||''} ${on?'on':''}" onclick="setSort('${k}','${col}',${c.num?1:0})" title="Ordenar por ${esc(c.l)}">${esc(c.l)}<i>${on?(st.d>0?'▲':'▼'):'↕'}</i></th>`}
+function viewBar(k,cols,st,n,noun){const v=viewOf(k);return`<div class="viewbar"><div class="seg" role="group" aria-label="Visualização"><button class="${v==='cards'?'on':''}" onclick="setView('${k}','cards')">▦ Cartões</button><button class="${v==='table'?'on':''}" onclick="setView('${k}','table')">☰ Tabela</button></div>
+ <label class="sortsel">Ordenar por <select onchange="SORTS['${k}']={k:this.value,d:(${JSON.stringify(Object.fromEntries(Object.entries(cols).map(([c,o])=>[c,o.num?-1:1]))).replace(/"/g,"'")})[this.value]};try{localStorage.setItem('mentha_sorts',JSON.stringify(SORTS))}catch(e){};render()">${Object.entries(cols).map(([c,o])=>`<option value="${c}" ${c===st.k?'selected':''}>${esc(o.l)}</option>`).join('')}</select><button class="btn ghost sm" onclick="event.preventDefault();setSortDir('${k}','${st.k}')" title="Inverter ordem">${st.d>0?'↑ Crescente':'↓ Decrescente'}</button></label>
+ <span class="count">${n} ${noun}</span></div>${v==='table'?'<div class="swipe-hint">↔ Deslize a tabela para o lado para ver todas as colunas. Toque no título de uma coluna para ordenar.</div>':''}`}
+const tblCls=k=>viewOf(k)==='table'?'no-rt':'force-rt';
 /* ================= modal ================= */
 function modal(title,body,{onSave,saveLabel='Salvar',wide=false,extra=''}={}){
  const m=$('modal');
@@ -660,20 +718,26 @@ function delAppt(id){const a=db.appts.find(x=>x.id===id);if(!confirm('Excluir es
 function rReceitas(v){
  const s=stats(cur),q=norm(rcQuery);
  let L=s.ap.slice().sort(byDT);if(q)L=L.filter(a=>norm(cname(a)+' '+servs(a)+' '+a.pagamento).includes(q));
+ const C={data:{l:'Data',v:a=>a.data+' '+(a.hora||'')},cliente:{l:'Cliente',v:a=>cname(a)},proc:{l:'Procedimento',v:a=>servs(a)},valor:{l:'Valor',num:1,v:a=>tot(a)-(+a.adicional||0)},adicional:{l:'Adicional',num:1,v:a=>+a.adicional||0},prof:{l:'Profissional',v:a=>pf(a)},pag:{l:'Pagamento',v:a=>a.pagamento||''},recebido:{l:'Recebido',num:1,v:a=>rec(a)},desc:{l:'Descrição',v:a=>a.descricao||''}};
+ const st=sortOf('receitas',{k:'data',d:1});L=sortRows(L,C,st);const T=(c,cl)=>sth('receitas',C,st,c,cl);
  v.innerHTML=`<div class="toolbar"><h2>Receitas</h2><input style="max-width:220px;flex:1 1 140px" placeholder="🔍 Filtrar" value="${esc(rcQuery)}" oninput="rcQuery=this.value;clearTimeout(window._rq);window._rq=setTimeout(()=>{render();const i=document.querySelector('.toolbar input');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"><button class="btn" onclick="apptForm(null,{status:'realizado',pagamento:'Pix'})">+ Lançamento</button></div>
  ${profBar()}
  <div class="kpis sect">${kpi('Total bruto faturado',BRL(s.fat),s.fromHist?'histórico da planilha':`${s.n} atendimentos`)}${Object.entries(s.porPag).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,val])=>kpi(k,BRL(val),s.fat?(val/s.fat*100).toFixed(0)+'%':'')).join('')}</div>
- <div class="card tw">${L.length?`<table><thead><tr><th>Data</th><th>Cliente</th><th>Procedimento</th><th class="num">Valor</th><th class="num">Adicional</th><th>Profissional</th><th>Pagamento</th><th class="num">Recebido</th><th>Descrição</th></tr></thead><tbody>${L.map(a=>`<tr class="click" onclick="apptForm('${a.id}')"><td>${fds(a.data)}</td><td>${esc(cname(a))}</td><td>${esc(servs(a))}</td><td class="num">${BRL(tot(a)-(+a.adicional||0))}</td><td class="num">${a.adicional?BRL(a.adicional):''}</td><td>${ppill(pf(a))}</td><td>${esc(a.pagamento||'')}</td><td class="num"><b>${BRL(rec(a))}</b></td><td class="small muted">${esc(a.descricao||'')}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="7">Total</td><td class="num">${BRL(L.reduce((t,a)=>t+rec(a),0))}</td><td></td></tr></tfoot></table>`:'<div class="empty">Nenhuma receita lançada neste mês.</div>'}</div>`;
+ ${L.length?viewBar('receitas',C,st,L.length,L.length===1?'lançamento':'lançamentos'):''}
+ <div class="card tw">${L.length?`<table class="${tblCls('receitas')}" style="${viewOf('receitas')==='table'?'min-width:900px':''}"><thead><tr>${T('data')}${T('cliente')}${T('proc')}${T('valor','num')}${T('adicional','num')}${T('prof')}${T('pag')}${T('recebido','num')}${T('desc')}</tr></thead><tbody>${L.map(a=>`<tr class="click" onclick="apptForm('${a.id}')"><td>${fds(a.data)}${a.hora?` <span class="small muted">${a.hora}</span>`:''}</td><td class="wrap">${esc(cname(a))}</td><td class="wrap">${esc(servs(a))}</td><td class="num">${BRL(tot(a)-(+a.adicional||0))}</td><td class="num">${a.adicional?BRL(a.adicional):''}</td><td>${ppill(pf(a))}</td><td>${esc(a.pagamento||'')}</td><td class="num"><b>${BRL(rec(a))}</b></td><td class="small muted wrap">${esc(a.descricao||'')}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="7">Total</td><td class="num">${BRL(L.reduce((t,a)=>t+rec(a),0))}</td><td></td></tr></tfoot></table>`:'<div class="empty">Nenhuma receita lançada neste mês.</div>'}</div>`;
 }
 
 /* ================= DESPESAS ================= */
 function rDespesas(v){
- const s=stats(cur),L=s.ex.slice().sort((a,b)=>(a.data||'9').localeCompare(b.data||'9'));
+ const s=stats(cur);let L=s.ex.slice().sort((a,b)=>(a.data||'9').localeCompare(b.data||'9'));
+ const C={data:{l:'Data',v:e=>e.data||''},desc:{l:'O que',v:e=>e.descricao||''},valor:{l:'Valor',num:1,v:e=>+e.valor||0},sit:{l:'Situação',v:e=>e.status||'Pendente'},tipo:{l:'Tipo',v:e=>e.tipo||''},meio:{l:'Meio de pagamento',v:e=>e.meio||''}};
+ const st=sortOf('despesas',{k:'data',d:1});L=sortRows(L,C,st);const T=(c,cl)=>sth('despesas',C,st,c,cl);
  const porTipo={};L.forEach(e=>{const k=e.tipo||'Sem tipo';porTipo[k]=(porTipo[k]||0)+(+e.valor||0)});
  v.innerHTML=`<div class="toolbar"><h2>Despesas</h2><button class="btn ghost" onclick="fixedManager()">⚙ Despesas fixas</button><button class="btn soft" onclick="genFixed()">⟳ Gerar fixas do mês</button><button class="btn soft" onclick="lancarDizimo()">Lançar dízimo</button><button class="btn" onclick="expenseForm()">+ Despesa</button></div>
  <div class="kpis sect">${kpi('💸 Total de gastos',BRL(L.length?s.gasto:s.fromHist?s.gasto:0),s.fromHist&&!L.length?'histórico da planilha':'')}${kpi('Pago',BRL(s.pago))}${kpi('Pendente',BRL(s.pend),'',s.pend?'var(--accent)':'')}${kpi('💲 Líquido do mês',BRL(s.lucro),'',s.lucro<0?'var(--danger)':'var(--brand)')}</div>
  ${Object.keys(porTipo).length?`<div class="chips sect">${Object.entries(porTipo).map(([k,val])=>`<span class="pill">${esc(k)}: <b>${BRL(val)}</b></span>`).join('')}</div>`:''}
- <div class="card tw">${L.length?`<table><thead><tr><th>Data</th><th>O que</th><th class="num">Valor</th><th>Situação</th><th>Tipo</th><th>Meio de pagamento</th></tr></thead><tbody>${L.map(e=>`<tr><td class="click" onclick="expenseForm('${e.id}')">${e.data?fds(e.data):''}</td><td class="click" onclick="expenseForm('${e.id}')" style="cursor:pointer">${esc(e.descricao)}</td><td class="num">${BRL(e.valor)}</td><td><button class="pill ${e.status==='Pago'?'ok':'warn'}" onclick="togglePago('${e.id}')">${e.status||'Pendente'}</button></td><td class="small">${esc(e.tipo||'')}</td><td class="small muted">${esc(e.meio||'')}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="2">Total</td><td class="num">${BRL(s.gasto)}</td><td colspan="3"></td></tr></tfoot></table>`:`<div class="empty">Nenhuma despesa em ${mLabel(cur)}.<br><br><button class="btn soft" onclick="genFixed()">⟳ Gerar despesas fixas do mês</button></div>`}</div>`;
+ ${L.length?viewBar('despesas',C,st,L.length,L.length===1?'despesa':'despesas'):''}
+ <div class="card tw">${L.length?`<table class="${tblCls('despesas')}" style="${viewOf('despesas')==='table'?'min-width:720px':''}"><thead><tr>${T('data')}${T('desc')}${T('valor','num')}${T('sit')}${T('tipo')}${T('meio')}</tr></thead><tbody>${L.map(e=>`<tr class="click" onclick="if(!event.target.closest('button'))expenseForm('${e.id}')"><td>${e.data?fds(e.data):'<span class="muted">—</span>'}</td><td>${esc(e.descricao)}</td><td class="num">${BRL(e.valor)}</td><td><button class="pill ${e.status==='Pago'?'ok':'warn'}" onclick="event.stopPropagation();togglePago('${e.id}')">${e.status||'Pendente'}</button></td><td class="small">${esc(e.tipo||'')}</td><td class="small muted">${esc(e.meio||'')}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="2">Total</td><td class="num">${BRL(s.gasto)}</td><td colspan="3"></td></tr></tfoot></table>`:`<div class="empty">Nenhuma despesa em ${mLabel(cur)}.<br><br><button class="btn soft" onclick="genFixed()">⟳ Gerar despesas fixas do mês</button></div>`}</div>`;
 }
 function togglePago(id){const e=db.expenses.find(x=>x.id===id);e.status=e.status==='Pago'?'Pendente':'Pago';save();render()}
 function expenseForm(id){
@@ -703,9 +767,11 @@ function rClientes(v){
  v.innerHTML=`<div class="toolbar"><h2>Clientes <span class="pill">${db.clients.length}</span></h2><button class="btn ghost" onclick="go('config')">⇪ Importar</button><button class="btn" onclick="clientForm()">+ Cliente</button></div>
  <input placeholder="🔍 Buscar por nome, telefone ou Instagram" value="${esc(clQuery)}" oninput="clQuery=this.value;drawClients()" style="margin-bottom:10px">
  <div class="chips sect">${F.map(([k,l])=>`<button class="chip ${clFilter===k?'on':''}" onclick="clFilter='${k}';render()">${l}</button>`).join('')}</div>
+ <div id="clVb"></div>
  <div class="card tw" id="cl"></div>`;
  drawClients();
 }
+function cliCols(cs){const td=todayISO();return{nome:{l:'Nome',v:c=>c.nome},contato:{l:'Contato',v:c=>String(c.telefone||'').replace(/\D/g,'')},ultima:{l:'Última visita',v:c=>(cs[c.id]||{}).last||''},proximo:{l:'Próximo',v:c=>(cs[c.id]||{}).future||''},visitas:{l:'Visitas',num:1,v:c=>(cs[c.id]||{}).n||0},total:{l:'Total gasto',num:1,v:c=>(cs[c.id]||{}).total||0},aniv:{l:'Aniversário',v:c=>c.nascimento?c.nascimento.slice(5):''},status:{l:'Status',v:c=>c.status||'Ativa'}}}
 function drawClients(){
  const cs=clientStats(),td=todayISO(),q=norm(clQuery);let L=db.clients.slice();
  if(q)L=L.filter(c=>norm(c.nome+' '+c.telefone+' '+c.instagram).includes(q));
@@ -714,7 +780,9 @@ function drawClients(){
  if(clFilter==='reagendar'){const s=new Set(needSchedule(cs).map(x=>x.c.id));L=L.filter(c=>s.has(c.id))}
  if(clFilter==='aniv')L=L.filter(c=>c.nascimento&&c.nascimento.slice(5,7)===cur.slice(5));
  L.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
- setTimeout(()=>labelTables($('cl')));$('cl').innerHTML=L.length?`<table><thead><tr><th>Nome</th><th>Contato</th><th>Última visita</th><th>Próximo</th><th class="num">Visitas</th><th class="num">Total gasto</th><th>Status</th></tr></thead><tbody>${L.map(c=>{const s=cs[c.id]||{};const w=waLink(c.telefone);return`<tr class="click" onclick="clientView('${c.id}')"><td><b>${esc(c.nome)}</b> ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️</span>':''}${c.instagram?`<div class="small muted">${esc(c.instagram)}</div>`:''}</td><td>${w?`<a href="${w}" target="_blank" onclick="event.stopPropagation()">${esc(c.telefone)}</a>`:esc(c.telefone||'')}</td><td>${s.last?`${fd(s.last)}${dDiff(s.last,td)>=0?`<div class="small muted">há ${dDiff(s.last,td)} dia${dDiff(s.last,td)===1?'':'s'}</div>`:''}`:'<span class="muted">—</span>'}</td><td>${s.future?`<span class="pill pink">${fds(s.future)}</span>`:''}</td><td class="num">${s.n||0}</td><td class="num">${BRL(s.total||0)}</td><td><span class="pill ${c.status==='Inativa'?'':'ok'}">${c.status||'Ativa'}</span></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Nenhuma cliente encontrada.</div>';
+ const C=cliCols(cs),st=sortOf('clientes',{k:'nome',d:1});L=sortRows(L,C,st);const T=(c,cl)=>sth('clientes',C,st,c,cl);
+ if($('clVb'))$('clVb').innerHTML=viewBar('clientes',C,st,L.length,L.length===1?'cliente':'clientes');
+ setTimeout(()=>labelTables($('cl')));$('cl').innerHTML=L.length?`<table class="${tblCls('clientes')}" style="${viewOf('clientes')==='table'?'min-width:860px':''}"><thead><tr>${T('nome')}${T('contato')}${T('ultima')}${T('proximo')}${T('visitas','num')}${T('total','num')}${T('aniv')}${T('status')}</tr></thead><tbody>${L.map(c=>{const s=cs[c.id]||{};const w=waLink(c.telefone);return`<tr class="click" onclick="clientView('${c.id}')"><td><b>${esc(c.nome)}</b> ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️</span>':''}${c.instagram?`<div class="small muted">${esc(c.instagram)}</div>`:''}</td><td>${w?`<a href="${w}" target="_blank" onclick="event.stopPropagation()">${esc(c.telefone)}</a>`:esc(c.telefone||'')}</td><td>${s.last?`${fd(s.last)}${dDiff(s.last,td)>=0?`<div class="small muted">há ${dDiff(s.last,td)} dia${dDiff(s.last,td)===1?'':'s'}</div>`:''}`:'<span class="muted">—</span>'}</td><td>${s.future?`<span class="pill pink">${fds(s.future)}</span>`:''}</td><td class="num">${s.n||0}</td><td class="num">${BRL(s.total||0)}</td><td>${c.nascimento?c.nascimento.slice(8)+'/'+c.nascimento.slice(5,7):''}</td><td><span class="pill ${c.status==='Inativa'?'':'ok'}">${c.status||'Ativa'}</span></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Nenhuma cliente encontrada.</div>';
 }
 function clientForm(id){
  const c=id?client(id):newClient({});
