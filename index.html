@@ -379,7 +379,7 @@ function wkStart(d){const[y,m,dd]=d.split('-').map(Number);return addD(d,-new Da
 function mEnd(m){return addD(addM(m,1)+'-01',-1)}
 const MSH=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 function fdl(d){const[y,m,dd]=d.split('-');return+dd+' '+MSH[+m-1]}
-function durMin(a){return(a.items||[]).reduce((t,i)=>{const s=db.services.find(x=>x.nome===i.servico);return t+(s?+s.duracao||0:0)},0)||+db.settings.duracaoPadrao||90}
+function durMin(a){if(+a.duracao)return+a.duracao;return(a.items||[]).reduce((t,i)=>{const s=db.services.find(x=>x.nome===i.servico);return t+(s?+s.duracao||0:0)},0)||+db.settings.duracaoPadrao||90}
 const toMin=h=>{const[a,b]=String(h||'0:0').split(':').map(Number);return a*60+(b||0)};
 const fromMin=m=>p2(Math.floor(m/60)%24)+':'+p2(Math.round(m%60));
 const PXH=56;
@@ -388,14 +388,33 @@ function agTitle(){if(agView==='dia')return`${dow(agDate)}, ${fdl(agDate)} de ${
 function agNav(k){if(k===0){agDate=todayISO();agFrom='';agTo=''}else if(agView==='dia')agDate=addD(agDate,k);else if(agView==='semana')agDate=addD(agDate,7*k);else{agDate=addM(agDate.slice(0,7),k)+'-01';agFrom='';agTo=''}cur=agDate.slice(0,7);render()}
 function agGo(d){if(!d)return;agDate=d;cur=d.slice(0,7);if(agView==='lista'){agFrom=d;agTo=''}render()}
 function agSet(v){agView=v;try{localStorage.setItem('mentha_agview',v)}catch(e){}render()}
+function gLocal(dt){const x=new Date(dt);if(isNaN(x))return null;return{d:x.getFullYear()+'-'+p2(x.getMonth()+1)+'-'+p2(x.getDate()),h:p2(x.getHours())+':'+p2(x.getMinutes()),min:x.getHours()*60+x.getMinutes()}}
+const NSTOP=new Set(['de','da','do','das','dos','e','com','para']);
+function evWords(s){return' '+norm(String(s||'').replace(/[^\p{L}\p{N}]+/gu,' '))+' '}
+function gMatch(items){
+ const used=new Set(db.appts.map(a=>a.gcalId).filter(Boolean)),byDay={};let n=0;
+ db.appts.forEach(a=>{if(a.data&&!a.hora&&!a.gcalId&&a.status!=='cancelado')(byDay[a.data]=byDay[a.data]||[]).push(a)});
+ (items||[]).forEach(e=>{if(!e.start||!e.start.dateTime||used.has(e.id)||e.status==='cancelled')return;const st=gLocal(e.start.dateTime);if(!st)return;const L=byDay[st.d];if(!L||!L.length)return;
+  const w=evWords((e.summary||'')+' '+(e.description||''));let best=null,bs=0,tie=false;
+  L.forEach(a=>{const toks=norm(cname(a)).split(' ').filter(t=>t.length>=3&&!NSTOP.has(t));if(!toks.length||!w.includes(' '+toks[0]+' '))return;const sc=1+toks.slice(1).filter(t=>w.includes(' '+t+' ')).length;if(sc>bs){best=a;bs=sc;tie=false}else if(sc===bs)tie=true});
+  if(!best||tie)return;
+  best.hora=st.h;best.gcalId=e.id;best.gLinked=true;used.add(e.id);
+  const en=e.end&&e.end.dateTime&&gLocal(e.end.dateTime);if(en){const dm=Math.round((new Date(e.end.dateTime)-new Date(e.start.dateTime))/6e4);if(dm>=10&&dm<=720)best.duracao=dm}
+  L.splice(L.indexOf(best),1);n++});
+ if(n)save();return n}
+async function gFetchAll(f,t){let items=[],tk='';const tmin=encodeURIComponent(f+'T00:00:00-03:00'),tmax=encodeURIComponent(addD(t,1)+'T00:00:00-03:00');
+ for(let i=0;i<20;i++){const j=await gFetch(`calendars/${cal()}/events?singleEvents=true&orderBy=startTime&maxResults=2500&timeMin=${tmin}&timeMax=${tmax}${tk?'&pageToken='+encodeURIComponent(tk):''}`);items=items.concat((j&&j.items)||[]);tk=j&&j.nextPageToken;if(!tk)break}return items}
+async function pullTimes(){if(!gReady())return gConnect(pullTimes);const sem=db.appts.filter(a=>a.data&&!a.hora&&!a.gcalId&&a.status!=='cancelado').map(a=>a.data).sort();if(!sem.length)return toast('Todos os atendimentos já têm horário ✓');
+ toast('Buscando horários no Google Agenda…');try{const items=await gFetchAll(sem[0],sem[sem.length-1]);const n=gMatch(items);gEv.key='';render();const rest=db.appts.filter(a=>a.data&&!a.hora&&a.status!=='cancelado').length;
+ modal('Horários do Google Agenda',`<p style="margin-top:0"><b>${n}</b> atendimento(s) receberam o horário do Google Agenda (de ${items.length} eventos lidos entre ${fd(sem[0])} e ${fd(sem[sem.length-1])}).</p><p class="small muted">O app liga o evento ao atendimento do mesmo dia quando o <b>nome da cliente</b> aparece no título ou na descrição do evento. ${rest?`Ainda ficaram <b>${rest}</b> sem horário — normalmente porque o evento não tem o nome da cliente, tem só um apelido, ou não existe na agenda. Esses continuam na faixa “sem hora”; você pode abrir e preencher o horário, ou clicar no evento azul do Google para importar.`:''}</p>`,{extra:'<button class="btn" onclick="closeModal()">OK</button>'})}catch(e){toast('Erro Google: '+e.message)}}
 function agItems(f,t){
  const linked=new Set(db.appts.map(a=>a.gcalId).filter(Boolean));
  const L=db.appts.filter(a=>a.data>=f&&a.data<=t).map(a=>({a,data:a.data,ini:a.hora?toMin(a.hora):null,dur:durMin(a)}));
- (gEv.items||[]).filter(e=>!linked.has(e.id)&&e.status!=='cancelled').forEach(e=>{const s=e.start.dateTime||e.start.date;if(!s)return;const d=s.slice(0,10);if(d<f||d>t)return;const ini=e.start.dateTime?toMin(s.slice(11,16)):null;let dur=60;const en=e.end&&e.end.dateTime;if(e.start.dateTime&&en)dur=Math.max(15,Math.round((new Date(en)-new Date(s))/6e4));L.push({g:e,data:d,ini,dur})});
+ (gEv.items||[]).filter(e=>!linked.has(e.id)&&e.status!=='cancelled').forEach(e=>{const s=e.start.dateTime||e.start.date;if(!s)return;const lc=e.start.dateTime?gLocal(s):null;const d=lc?lc.d:s.slice(0,10);if(d<f||d>t)return;const ini=lc?lc.min:null;let dur=60;const en=e.end&&e.end.dateTime;if(e.start.dateTime&&en)dur=Math.max(15,Math.round((new Date(en)-new Date(s))/6e4));L.push({g:e,data:d,ini,dur})});
  return L.sort((x,y)=>x.data.localeCompare(y.data)||((x.ini??-1)-(y.ini??-1)));
 }
 function agEnsureG(f,t){if(!gReady())return;const k=f+'|'+t+'|'+cal();if(gEv.key===k||gEv.loading===k)return;gEv.loading=k;const tmin=encodeURIComponent(f+'T00:00:00-03:00'),tmax=encodeURIComponent(addD(t,1)+'T00:00:00-03:00');
- gFetch(`calendars/${cal()}/events?singleEvents=true&orderBy=startTime&maxResults=500&timeMin=${tmin}&timeMax=${tmax}`).then(j=>{gEv={key:k,items:(j&&j.items)||[]};if(tab==='agenda')render()}).catch(e=>{gEv.loading='';toast('Erro Google: '+e.message)})}
+ gFetch(`calendars/${cal()}/events?singleEvents=true&orderBy=startTime&maxResults=500&timeMin=${tmin}&timeMax=${tmax}`).then(j=>{gEv={key:k,items:(j&&j.items)||[]};const n=gMatch(gEv.items);if(n)toast(`${n} horário(s) puxados do Google Agenda ✓`);if(tab==='agenda')render()}).catch(e=>{gEv.loading='';toast('Erro Google: '+e.message)})}
 function gPendList(){const td=todayISO();return db.appts.filter(a=>a.gPending||(a.status==='agendado'&&a.data>=td&&!a.gcalId))}
 function rAgenda(v){
  const[f,t]=agRange();agEnsureG(f,t);
@@ -403,7 +422,7 @@ function rAgenda(v){
  const gBtn=!db.settings.gClientId?`<button class="btn ghost" onclick="go('config')">🔗 Conectar Google Agenda</button>`:gReady()?`<span class="pill gg" title="Os atendimentos criados aqui vão para o Google Agenda">● Google Agenda conectada</span><button class="btn ghost sm" onclick="gEv.key='';render()" title="Recarregar eventos do Google">↻</button>`:`<button class="btn g" onclick="gConnect(flushPending)">🔗 Entrar com Google</button>`;
  const V=[['dia','Dia'],['semana','Semana'],['mes','Mês'],['lista','Lista']];
  const nd=agView==='dia'||agDate>todayISO()?agDate:todayISO();
- v.innerHTML=`<div class="toolbar"><h2>Agenda</h2>${gBtn}${pend?`<button class="btn soft sm" onclick="gReady()?flushPending():gConnect(flushPending)" title="Agendamentos ainda não enviados ao Google Agenda">⟳ Enviar ${pend} ao Google</button>`:''}<button class="btn" onclick="apptForm(null,{data:'${nd}'})">+ Agendar</button></div>
+ v.innerHTML=`<div class="toolbar"><h2>Agenda</h2>${gBtn}${pend?`<button class="btn soft sm" onclick="gReady()?flushPending():gConnect(flushPending)" title="Agendamentos ainda não enviados ao Google Agenda">⟳ Enviar ${pend} ao Google</button>`:''}${db.settings.gClientId&&db.appts.some(a=>a.data&&!a.hora&&!a.gcalId&&a.status!=='cancelado')?`<button class="btn ghost" onclick="pullTimes()" title="Copia o horário dos eventos do Google Agenda para os atendimentos sem hora">🕒 Puxar horários do Google</button>`:''}<button class="btn" onclick="apptForm(null,{data:'${nd}'})">+ Agendar</button></div>
  <div class="calbar sect"><b class="caltitle">${agTitle()}</b><button class="btn ghost sm" onclick="agNav(0)">Hoje</button><button class="btn ghost sm icon" onclick="agNav(-1)" aria-label="Anterior">‹</button><button class="btn ghost sm icon" onclick="agNav(1)" aria-label="Próximo">›</button><input type="date" class="tinput" style="width:auto" value="${agDate}" onchange="agGo(this.value)" title="Ir para a data"><span style="flex:1"></span><div class="seg">${V.map(([k,l])=>`<button class="${agView===k?'on':''}" onclick="agSet('${k}')">${l}</button>`).join('')}</div></div>
  ${agView==='lista'?`<div class="calbar sect"><label class="small muted">De <input type="date" class="tinput" style="width:auto" value="${f}" onchange="agFrom=this.value;render()"></label><label class="small muted">Até <input type="date" class="tinput" style="width:auto" value="${t}" onchange="agTo=this.value;render()"></label><div class="chips">${[['prox','Só agendados'],['todos','Todos']].map(([k,l])=>`<button class="chip ${agFilter===k?'on':''}" onclick="agFilter='${k}';render()">${l}</button>`).join('')}</div></div>`:''}
  ${agView==='mes'?calMonth(f):agView==='lista'?calList(f,t):calGrid(agView==='dia'?[agDate]:[0,1,2,3,4,5,6].map(i=>addD(f,i)))}
@@ -439,7 +458,7 @@ function apptCard(a){
  return`<div class="appt ${a.status}"><div class="time">${a.hora||'--:--'}</div><div class="who"><b>${esc(cname(a))} ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️ alergia</span>':''}${c.gestante?' <span class="pill warn">gestante</span>':''}${c.diabetes?' <span class="pill warn">diabetes</span>':''}</b><span class="small muted">${esc(servs(a))} · ${BRL(tot(a))}${a.gcalId?' · <span style="color:var(--g)">● Google</span>':''}</span></div><span class="pill ${st[1]}">${st[0]}</span><div class="acts">${a.status==='agendado'?`<button class="btn sm" onclick="concluir('${a.id}')">✓ Concluir</button>${w?`<a class="btn sm soft" target="_blank" href="${w}">Lembrete</a>`:''}${!a.gcalId?`<a class="btn sm ghost" target="_blank" href="${gTemplate(a)}" title="Adicionar no Google Agenda">📅</a>`:''}`:''}<button class="btn sm ghost" onclick="apptForm('${a.id}')">✎</button></div></div>`;
 }
 function gCard(x){const e=x.g;return`<div class="appt gcal"><div class="time">${x.ini!=null?fromMin(x.ini):'dia'}</div><div class="who"><b>${esc(e.summary||'(sem título)')}</b><span class="small muted">Evento da Google Agenda</span></div><div class="acts"><button class="btn sm soft" onclick="importGEvent('${e.id}')">Importar</button></div></div>`}
-function concluir(id){const a=db.appts.find(x=>x.id===id);modal('Concluir atendimento',`<p style="margin-top:0"><b>${esc(cname(a))}</b><br><span class="muted">${esc(servs(a))} · ${BRL(tot(a))}</span></p><label class="f">Forma de pagamento<select id="cPg">${opts(PAGS,a.pagamento||'Pix')}</select></label><label class="f">Adicional / desconto (R$, use negativo para desconto)<input id="cAd" type="number" step="0.01" value="${a.adicional||0}"></label>`,{saveLabel:'✓ Concluir',onSave:()=>{a.pagamento=$('cPg').value;a.adicional=+$('cAd').value||0;a.status='realizado';if(a.gcalId){a.gPending=true;if(gReady())syncAppt(a,true)}save();closeModal();render();toast('Concluído · recebido '+BRL(rec(a)))}})}
+function concluir(id){const a=db.appts.find(x=>x.id===id);modal('Concluir atendimento',`<p style="margin-top:0"><b>${esc(cname(a))}</b><br><span class="muted">${esc(servs(a))} · ${BRL(tot(a))}</span></p><label class="f">Forma de pagamento<select id="cPg">${opts(PAGS,a.pagamento||'Pix')}</select></label><label class="f">Adicional / desconto (R$, use negativo para desconto)<input id="cAd" type="number" step="0.01" value="${a.adicional||0}"></label>`,{saveLabel:'✓ Concluir',onSave:()=>{a.pagamento=$('cPg').value;a.adicional=+$('cAd').value||0;a.status='realizado';if(a.gcalId&&!a.gLinked){a.gPending=true;if(gReady())syncAppt(a,true)}save();closeModal();render();toast('Concluído · recebido '+BRL(rec(a)))}})}
 
 /* ===== formulário de atendimento ===== */
 function itemRow(it={}){
@@ -474,15 +493,15 @@ function apptForm(id,preset={}){
  </details>
  <details><summary>Valor recebido manual</summary><label class="f">Recebido líquido (deixe vazio para calcular com as taxas)<input id="aRec" type="number" step="0.01" value="${a.recebido??''}"></label></details>
  ${canSync?`<label class="ck"><input type="checkbox" id="aSync" ${a.status!=='realizado'||a.gcalId?'checked':''}> Registrar no Google Agenda ${a.gcalId?'<span class="pill gg">já está no Google</span>':gReady()?'':'<span class="small muted">(vai pedir o login do Google)</span>'}</label>`:''}`,
- {onSave:()=>saveAppt(id,a.gcalId),extra:id?`<button class="btn ghost danger" onclick="delAppt('${id}')">Excluir</button>`:''});
+ {onSave:()=>saveAppt(id,a.gcalId,a.gLinked),extra:id?`<button class="btn ghost danger" onclick="delAppt('${id}')">Excluir</button>`:''});
  cliHint();updTot();
 }
-function saveAppt(id,presetG){
+function saveAppt(id,presetG,presetL){
  const nome=$('aCli').value.trim();if(!nome)return toast('Informe a cliente');if(!$('aData').value)return toast('Informe a data');
  let c=db.clients.find(x=>norm(x.nome)===norm(nome));if(!c){c=newClient({nome:nome.replace(/\s+/g,' ')});db.clients.push(c);toast('Nova cliente cadastrada 🌿')}
  const items=[...document.querySelectorAll('#items .irow')].map(r=>({servico:r.querySelector('.is').value,valor:+r.querySelector('.iv').value||0})).filter(i=>i.servico||i.valor);
  const doSync=$('aSync')&&$('aSync').checked;
- let a=id?db.appts.find(x=>x.id===id):null;const isNew=!a;if(!a)a={id:uid(),criadoEm:new Date().toISOString(),gcalId:presetG||''};
+ let a=id?db.appts.find(x=>x.id===id):null;const isNew=!a;if(!a)a={id:uid(),criadoEm:new Date().toISOString(),gcalId:presetG||'',gLinked:!!presetL};
  Object.assign(a,{data:$('aData').value,hora:$('aHora').value,clientId:c.id,cliente:c.nome,items,adicional:+$('aAd').value||0,pagamento:$('aPg').value,status:$('aSt').value,descricao:$('aDesc').value.trim(),recebido:$('aRec').value===''?null:+$('aRec').value,ficha:{saudavel:$('fS').value,obs:$('fO').value.trim(),produtos:$('fP').value.trim()}});
  if(doSync)a.gPending=true;if(isNew)db.appts.push(a);save();closeModal();render();
  if(doSync){if(gReady())syncAppt(a);else if(db.settings.gClientId)gConnect(flushPending)}
@@ -763,7 +782,7 @@ function gConnect(cb){
  tokenClient.requestAccessToken(gToken?{prompt:''}:{});
 }
 async function gFetch(path,o={}){const r=await fetch('https://www.googleapis.com/calendar/v3/'+path,Object.assign({},o,{headers:{Authorization:'Bearer '+gToken.t,'Content-Type':'application/json'}}));if(r.status===204||r.status===410)return null;const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||r.status);return j}
-function apptEnd(a){const dur=(a.items||[]).reduce((t,i)=>{const s=db.services.find(x=>x.nome===i.servico);return t+(s?+s.duracao||0:0)},0)||+db.settings.duracaoPadrao||90;const[y,m,d]=a.data.split('-').map(Number);const[h,mi]=(a.hora||'09:00').split(':').map(Number);const e=new Date(y,m-1,d,h,mi+dur);return e.getFullYear()+'-'+p2(e.getMonth()+1)+'-'+p2(e.getDate())+'T'+p2(e.getHours())+':'+p2(e.getMinutes())+':00'}
+function apptEnd(a){const dur=durMin(a);const[y,m,d]=a.data.split('-').map(Number);const[h,mi]=(a.hora||'09:00').split(':').map(Number);const e=new Date(y,m-1,d,h,mi+dur);return e.getFullYear()+'-'+p2(e.getMonth()+1)+'-'+p2(e.getDate())+'T'+p2(e.getHours())+':'+p2(e.getMinutes())+':00'}
 function gBody(a){const c=client(a.clientId)||{};return{summary:`${a.status==='realizado'?'✅':'💅'} ${cname(a)} — ${servs(a)}`,description:[`Cliente: ${cname(a)}`,c.telefone?`Telefone: ${c.telefone}`:'',`Valor: ${BRL(tot(a))}`,c.alergiaDesc?`⚠️ Alergia: ${c.alergiaDesc}`:'',a.descricao||'','— Mentha CRM'].filter(Boolean).join('\n'),start:{dateTime:`${a.data}T${a.hora||'09:00'}:00`,timeZone:'America/Sao_Paulo'},end:{dateTime:apptEnd(a),timeZone:'America/Sao_Paulo'}}}
 function gTemplate(a){const s=a.data.replace(/-/g,'')+'T'+(a.hora||'09:00').replace(':','')+'00',e=apptEnd(a).replace(/[-:]/g,'');const b=gBody(a);return'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(b.summary)+'&dates='+s+'/'+e+'&ctz=America/Sao_Paulo&details='+encodeURIComponent(b.description)}
 async function syncAppt(a,quiet){try{if(a.status==='cancelado'||a.status==='faltou'){if(a.gcalId){await gFetch(`calendars/${cal()}/events/${a.gcalId}`,{method:'DELETE'});a.gcalId=''}}else if(a.gcalId){await gFetch(`calendars/${cal()}/events/${a.gcalId}`,{method:'PATCH',body:JSON.stringify(gBody(a))})}else{const j=await gFetch(`calendars/${cal()}/events`,{method:'POST',body:JSON.stringify(gBody(a))});a.gcalId=j.id}a.gPending=false;save();if(!quiet){toast('Google Agenda atualizada ✓');render()}return true}catch(e){if(/401|invalid|credential/i.test(e.message)){gToken=null}toast('Erro Google: '+e.message);return false}}
@@ -771,7 +790,7 @@ async function flushPending(){if(!gReady())return gConnect(flushPending);let n=0
  for(const id of (db.gDelQ||[]).slice()){try{await gFetch(`calendars/${cal()}/events/${id}`,{method:'DELETE'})}catch(e){}db.gDelQ=db.gDelQ.filter(x=>x!==id)}
  for(const a of gPendList()){if(a.status==='realizado'&&!a.gcalId){a.gPending=false;continue}if(await syncAppt(a,true))n++;else er++}
  save();gEv.key='';render();toast(n||er?`${n} atendimento(s) enviados ao Google Agenda${er?` · ${er} com erro`:''} ✓`:'Google Agenda em dia ✓')}
-function importGEvent(id){const e=(gEv.items||[]).find(x=>x.id===id);if(!e)return;const st=e.start.dateTime||e.start.date;const sum=String(e.summary||'').replace(/^(💅|✅)\s*/,'');const[nome,sv]=sum.split(' — ');const items=(sv||'').split('+').map(s=>s.trim()).filter(Boolean).map(n=>{const s=db.services.find(x=>norm(x.nome)===norm(n));return{servico:s?s.nome:n,valor:s?s.preco:''}});const c=findClient(nome);apptForm(null,{data:st.slice(0,10),hora:e.start.dateTime?st.slice(11,16):'',clientId:c?c.id:'',cliente:(nome||'').trim(),items,gcalId:e.id})}
+function importGEvent(id){const e=(gEv.items||[]).find(x=>x.id===id);if(!e)return;const st=e.start.dateTime||e.start.date;const sum=String(e.summary||'').replace(/^(💅|✅)\s*/,'');const[nome,sv]=sum.split(' — ');const items=(sv||'').split('+').map(s=>s.trim()).filter(Boolean).map(n=>{const s=db.services.find(x=>norm(x.nome)===norm(n));return{servico:s?s.nome:n,valor:s?s.preco:''}});const c=findClient(nome);const lc=e.start.dateTime&&gLocal(st);apptForm(null,{data:lc?lc.d:st.slice(0,10),hora:lc?lc.h:'',gLinked:true,clientId:c?c.id:'',cliente:(nome||'').trim(),items,gcalId:e.id})}
 
 
 
