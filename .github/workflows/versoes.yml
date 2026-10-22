@@ -1,0 +1,44 @@
+# Cria automaticamente a marcação (tag) e a página de Release de cada versão.
+# Cada versão publicada tem um branch "versao-vX.Y.Z" apontando para o código dela;
+# as novidades vêm da seção correspondente do CHANGELOG.md.
+name: Versões
+
+on:
+  push:
+    branches: ['main', 'versao-v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  releases:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Criar releases que ainda não existem
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          git fetch origin '+refs/heads/versao-v*:refs/remotes/origin/versao-v*' || true
+          for ref in $(git for-each-ref --format='%(refname:short)' 'refs/remotes/origin/versao-v*' | sort -V); do
+            tag="${ref#origin/versao-}"          # v2.0.0
+            ver="${tag#v}"                        # 2.0.0
+            major="${ver%%.*}"                    # 2
+            sha=$(git rev-parse "$ref")
+            if gh release view "$tag" >/dev/null 2>&1; then
+              echo "Release $tag já existe"; continue
+            fi
+            awk -v v="— $ver" '
+              /^## V/ { if (on) exit; if (index($0, v)) { on=1 } }
+              on { print }
+            ' CHANGELOG.md > notas.md
+            [ -s notas.md ] || echo "Versão $ver" > notas.md
+            latest="--latest=false"
+            [ "$(git for-each-ref --format='%(refname:short)' 'refs/remotes/origin/versao-v*' | sort -V | tail -1)" = "$ref" ] && latest="--latest"
+            gh release create "$tag" --target "$sha" --title "V$major — $ver" --notes-file notas.md $latest
+            echo "Release $tag criada"
+          done
