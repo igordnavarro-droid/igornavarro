@@ -1,7 +1,7 @@
 // Mentha CRM — service worker: permite instalar o app e abrir sem internet.
 // O app (index.html) é sempre buscado na rede primeiro, para receber atualizações;
 // a cópia salva só é usada quando o aparelho está offline.
-const VERSION = 'mentha-v2';
+const VERSION = 'mentha-2.0.0';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-any-192.png', './icons/icon-any-512.png', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 const STATIC_HOSTS = ['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 

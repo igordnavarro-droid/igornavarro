@@ -1,5 +1,7 @@
 # Mentha CRM 🌿
 
+**Versão atual: 2.0.0 (V2)** — veja o [histórico de versões](CHANGELOG.md).
+
 CRM e controle financeiro do **Mentha Nail Design** em um único arquivo (`index.html`), feito para rodar no GitHub Pages.
 
 ## O que tem
@@ -9,11 +11,11 @@ CRM e controle financeiro do **Mentha Nail Design** em um único arquivo (`index
 - **Profissionais** (Thais e Amanda): cada atendimento tem a profissional; filtro Todas/Thais/Amanda no Painel, Agenda, Receitas e Relatórios; cada uma tem a sua agenda no Google.
 - **Painel** no modelo da aba Outubro.26: meta do mês, quanto falta, total bruto faturado, total de gastos e total líquido, além de próximos atendimentos, clientes que precisam reagendar, contas pendentes, aniversariantes e dízimo sugerido.
 - **Agenda**: visões Dia, Semana, Mês e Lista (como o Google Agenda), com filtro de data. Clique num horário vazio para agendar. Tudo o que é criado, concluído ou excluído vai automaticamente para o Google Agenda; se o login do Google tiver expirado, os eventos ficam na fila e são enviados quando você entrar de novo.
-- **Receitas**: tabela igual à da planilha (Data, Cliente, Procedimento, Valor, Adicional, Pagamento, Total, Descrição). Taxa de crédito (3,09%) e débito (0,89%) descontadas automaticamente.
+- **Receitas**: tabela igual à da planilha (Data, Cliente, Procedimento, Valor, Adicional, Pagamento, Total, Descrição). Os valores são líquidos, como na planilha (o desconto da maquininha é opcional em Config). Botão **Conferir com a planilha** compara o mês com a aba da planilha.
 - **Despesas**: Pago/Pendente com um toque, tipos e meios de pagamento da planilha, parcelamentos (1/10, 2/10…) e botão para gerar as despesas fixas do mês.
 - **Clientes**: ficha com anamnese (alergias, diabetes, gestante), indicações, histórico, ficha técnica das manutenções, total gasto e última visita.
 - **Serviços**: tabela de preços e duração editáveis.
-- **Relatórios**: filtro de período (este mês, mês passado, 3/6/12 meses, ano, personalizado…) e visão por dia, semana ou mês, com faturado, gastos, líquido, atendimentos, ticket médio, meta, serviços, clientes, formas de pagamento, dia da semana, despesas por tipo e novas clientes. Exporta CSV.
+- **Relatórios**: filtro de período e visão por dia/semana/mês; faturado × gastos × meta, atendimentos, serviços, formas de pagamento e visitas por cliente por data, além de serviços mais vendidos, melhores clientes, dia da semana e origem das clientes. Exporta CSV.
 
 ## Publicar no GitHub Pages
 
@@ -57,3 +59,9 @@ Os dados ficam numa aba oculta (`CRM_dados`) da planilha "Controle Financeiro - 
 ## Backup
 
 Em **Config → Backup** dá para baixar uma cópia `.json` dos dados a qualquer momento.
+
+## Versões
+
+- Cada versão publicada ganha uma marcação (`v1.0.0`, `v2.0.0`…) e uma página em **Releases** no GitHub, com o que mudou.
+- O histórico completo está em [CHANGELOG.md](CHANGELOG.md).
+- Para voltar a uma versão anterior, peça ao Claude: "volte o app para a V1". A versão marcada é republicada sem perder os dados, que ficam na planilha.
