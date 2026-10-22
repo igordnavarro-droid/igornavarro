@@ -6,12 +6,12 @@ CRM e controle financeiro do **Mentha Nail Design** em um único arquivo (`index
 
 - Tema claro com detalhes em verde.
 - **Painel** no modelo da aba Outubro.26: meta do mês, quanto falta, total bruto faturado, total de gastos e total líquido, além de próximos atendimentos, clientes que precisam reagendar, contas pendentes, aniversariantes e dízimo sugerido.
-- **Agenda**: agendar, concluir com forma de pagamento, lembrete pronto no WhatsApp e sincronização com a Google Agenda.
+- **Agenda**: visões Dia, Semana, Mês e Lista (como o Google Agenda), com filtro de data. Clique num horário vazio para agendar. Tudo o que é criado, concluído ou excluído vai automaticamente para o Google Agenda; se o login do Google tiver expirado, os eventos ficam na fila e são enviados quando você entrar de novo.
 - **Receitas**: tabela igual à da planilha (Data, Cliente, Procedimento, Valor, Adicional, Pagamento, Total, Descrição). Taxa de crédito (3,09%) e débito (0,89%) descontadas automaticamente.
 - **Despesas**: Pago/Pendente com um toque, tipos e meios de pagamento da planilha, parcelamentos (1/10, 2/10…) e botão para gerar as despesas fixas do mês.
 - **Clientes**: ficha com anamnese (alergias, diabetes, gestante), indicações, histórico, ficha técnica das manutenções, total gasto e última visita.
 - **Serviços**: tabela de preços e duração editáveis.
-- **Relatórios**: 12 meses de faturado × gastos × meta, comparação com o ano anterior, serviços mais vendidos, melhores clientes e de onde as clientes vieram. O histórico desde set/24 já vem carregado.
+- **Relatórios**: filtro de período (este mês, mês passado, 3/6/12 meses, ano, personalizado…) e visão por dia, semana ou mês, com faturado, gastos, líquido, atendimentos, ticket médio, meta, serviços, clientes, formas de pagamento, dia da semana, despesas por tipo e novas clientes. Exporta CSV.
 
 ## Publicar no GitHub Pages
 
