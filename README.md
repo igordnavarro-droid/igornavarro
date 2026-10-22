@@ -45,6 +45,14 @@ Sem configurar nada, o botão 📅 de cada atendimento já abre o evento preench
 
 Com isso, cada agendamento cria/atualiza/remove o evento na agenda, e a aba Agenda mostra os eventos do Google do mês para importar. O login do Google dura cerca de 1 hora; quando expirar, é só clicar em "Entrar com Google" de novo.
 
+## Sincronização entre aparelhos
+
+Os dados ficam numa aba oculta (`CRM_dados`) da planilha "Controle Financeiro - Unhas", na conta Google de vocês, e não no repositório. Todo aparelho que entrar com o Google usa os mesmos dados. As alterações são enviadas em segundos, e os outros aparelhos recebem ao abrir o app ou a cada ~45 s.
+
+- Para configurar um celular ou tablet novo: no computador, **Config → Usar em outro aparelho**. Escaneie o QR code com o celular e toque em **Entrar com Google**.
+- A planilha precisa estar compartilhada como **Editor** com todos os e-mails que usam o app.
+- Se dois aparelhos editarem ao mesmo tempo, as alterações são combinadas registro a registro.
+
 ## Backup
 
-Os dados ficam no navegador do aparelho. Em **Config → Backup**, baixe o arquivo `.json` com frequência; use **Restaurar backup** para passar os dados para outro celular ou computador.
+Em **Config → Backup** dá para baixar uma cópia `.json` dos dados a qualquer momento.
