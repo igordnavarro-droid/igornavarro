@@ -14,9 +14,9 @@
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
 body{background:radial-gradient(1200px 400px at 10% -10%,#DDF3E9 0,transparent 60%),var(--bg);background-attachment:fixed}
-body{margin:0;color:var(--ink);font:15px/1.45 'DM Sans',system-ui,-apple-system,sans-serif;padding-bottom:84px}
+body{margin:0;color:var(--ink);font:15px/1.45 'DM Sans',system-ui,-apple-system,sans-serif;padding-bottom:calc(90px + env(safe-area-inset-bottom))}
 a{color:var(--brand-ink)}
-header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);border-top:4px solid var(--brand)}
+header.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);border-top:4px solid var(--brand)}
 .topin{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
 .logo{font-family:Fraunces,serif;font-size:21px;color:var(--brand-ink);display:flex;align-items:center;gap:10px;white-space:nowrap;line-height:1.05}
 .logo .leaf{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand-soft),#BFE8D6);display:grid;place-items:center;font-size:18px}
@@ -30,13 +30,18 @@ nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{border:0;background:transparent;color:var(--muted);font:600 14px 'DM Sans',system-ui,sans-serif;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap}
 nav.tabs button.on{background:var(--brand-soft);color:var(--brand-ink)}
 main{max-width:1180px;margin:0 auto;padding:18px 16px}
-@media(max-width:760px){
+@media(max-width:820px){
+ header.top{border-top-width:3px}
+ .topin{padding:8px 12px;gap:8px}
+ .month{flex:0 0 auto}
  .kpis{grid-template-columns:1fr 1fr;gap:10px}.kpi .v{font-size:19px}
- nav.tabs{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:30;gap:0}
- nav.tabs button{flex-direction:column;font-size:10.5px;padding:5px 9px;gap:1px;min-width:64px}
+ nav.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(10,60,45,.08);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:40;gap:0;margin:0;max-width:none}
+ nav.tabs button.on{background:var(--brand-soft)}
+ nav.tabs button{flex:1 1 0;min-width:0;flex-direction:column;font-size:9.5px;letter-spacing:-.01em;padding:5px 1px;gap:1px;overflow:hidden;text-overflow:ellipsis}
  nav.tabs button i{font-size:19px}
  .logo small{display:none}.logo{font-size:18px}.logo .leaf{display:none}
- .month span{min-width:96px;font-size:13px}
+ .month span{min-width:104px;font-size:13.5px}
+ .month button{width:36px;height:36px;font-size:18px}
  main{padding:14px 12px}
 }
 nav.tabs button i{font-style:normal}
@@ -96,7 +101,7 @@ label.ck{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:10
 .mhead .x{margin-left:auto;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer}
 .mbody{padding:16px 18px}
 .mfoot{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
-.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:60;opacity:0;transition:.25s;pointer-events:none;font-weight:500;max-width:90vw;text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:60;opacity:0;transition:.25s;pointer-events:none;font-weight:500;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%)}
 .day{font-weight:700;margin:18px 0 8px;color:var(--brand-ink);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;display:flex;gap:8px}
 .day .muted{font-weight:500}
@@ -191,7 +196,7 @@ function defaults(){
  const H={'2024-09':[3101.18,2713.05],'2024-10':[5660.56,4722.85],'2024-11':[6075.78,4488.58],'2024-12':[5794.29,4234.43],'2025-01':[5262.34,4364.31],'2025-02':[5609.54,5810.08],'2025-03':[6846.66,6102.14],'2025-04':[6353.77,5286.61],'2025-05':[6637.84,5694.32],'2025-06':[5675.36,6016.08],'2025-07':[7229.19,6053.91],'2025-08':[5378.82,4397.41],'2025-09':[12345.30,7950.62],'2025-10':[9495.65,8239.80],'2025-11':[8520.98,6672.77],'2025-12':[11323.87,7750.15],'2026-01':[7793.97,7638.18],'2026-02':[9686.30,8294.56],'2026-03':[9709.11,8490.31],'2026-04':[10079.22,9126.87],'2026-05':[10138.35,9277.35],'2026-06':[6521.61,8367.19],'2026-07':[8842.82,8349.16],'2026-08':[12775.74,8969.65],'2026-09':[13546.49,13820.07]};
  const history={};Object.entries(H).forEach(([k,[f,g]])=>history[k]={fat:f,gasto:g});
  return{v:1,clients:[],appts:[],expenses:[],
- services:[S('Manicure russa',170,90,'Mãos'),S('Manutenção',170,120,'Alongamento'),S('Alongamento',230,150,'Alongamento'),S('Esmaltação em gel',100,60,'Mãos'),S('Manicure tradicional',70,45,'Mãos'),S('Cuticulagem russa',40,40,'Mãos'),S('Remoção de gel',80,40,'Mãos'),S('Reparo de unha',15,20,'Mãos'),S('Podal russo',80,60,'Pés'),S('Pedicure tradicional',60,45,'Pés'),S('Taxa de agendamento',70,0,'Taxas'),S('Taxa de cancelamento',40,0,'Taxas'),S('Workshop',167,240,'Educação'),S('Mentoria (parcela)',215,120,'Educação'),S('Curso on-line (parcela)',50,0,'Educação'),S('Curso Manicure Russa',1497,480,'Educação'),S('Curso Alongamento',900,480,'Educação')],
+ services:[S('Manicure russa',170,90,'Mãos'),S('Manutenção',170,120,'Alongamento'),S('Alongamento',230,150,'Alongamento'),S('Esmaltação em gel',100,60,'Mãos'),S('Manicure tradicional',70,45,'Mãos'),S('Cuticulagem russa',40,40,'Mãos'),S('Remoção de gel',80,40,'Mãos'),S('Reparo de unha',15,20,'Mãos'),S('Podal russo',80,60,'Pés'),S('Pedicure tradicional',60,45,'Pés'),S('Manicure e pedicure tradicional',130,90,'Pés'),S('Taxa de agendamento',70,0,'Taxas'),S('Taxa de cancelamento',40,0,'Taxas'),S('Workshop',167,240,'Educação'),S('Mentoria',215,120,'Educação'),S('Curso on-line',50,0,'Educação'),S('Curso Manicure Russa',1497,480,'Educação'),S('Curso Alongamento',900,480,'Educação')],
  fixed:[F('Aluguel',850,'Despesas fixas','À vista',25),F('Condomínio',314.39,'Despesas fixas','À vista',25),F('Internet',121,'Despesas fixas','À vista',10),F('Impostos',87.05,'Despesas fixas','À vista',20),F('Pacote Cresol',56,'Despesas fixas','À vista',7),F('Energia elétrica',167,'Despesas fixas','À vista',28),F('Galão de água',22,'Custos','À vista',10),F('Seguro do estúdio',174.18,'Custos','Cartão de crédito PF',10),F('Armazenamento Google',49.90,'Custos','Cartão de crédito PF',28),F('CapCut',32,'Custos','Cartão de crédito PF',28),F('Salário Thais',2600,'Pró-labore','À vista',28),F('Empréstimo Cresol',1357.61,'Investimentos','À vista',10,24,'2025-09')],
  goals:{'2026-04':10000,'2026-05':12000,'2026-08':13000,'2026-09':14000,'2026-10':15000},
  history,
@@ -263,7 +268,7 @@ function rPainel(v){
  const novo=!db.clients.length&&!db.appts.length;
  v.innerHTML=`
  <div class="toolbar"><h2>🗓️ ${mLabel(cur)}</h2>${db.settings.gSheetId&&db.settings.gClientId?`<button class="btn ghost" onclick="syncSheetNow()" title="Puxar clientes e ${mLabel(cur)} da planilha">↻ Planilha</button>`:''}<button class="btn ghost" onclick="goalForm()">🎯 ${meta?'Editar meta':'Definir meta'}</button><button class="btn" onclick="apptForm()">+ Atendimento</button></div>
- ${novo?`<div class="alert info sect">👋 Bem-vinda! Para trazer seus dados, vá em <a href="#" onclick="go('config');return false">Config → Planilha Google</a>, conecte com sua conta e importe as abas. O histórico de faturamento desde set/24 já está carregado nos relatórios.</div>`:''}
+ ${novo?`<div class="alert info sect">👋 Bem-vinda! Para trazer seus dados, vá em <a href="#" onclick="go('config');return false">Config → Planilha Google</a>, conecte com sua conta e importe as abas — ou carregue o arquivo de dados que você recebeu: <label class="btn sm" style="cursor:pointer;margin-left:4px">⬆ Carregar arquivo de dados<input type="file" accept=".json" hidden onchange="readFile(this,importJSON)"></label> O histórico de faturamento desde set/24 já está carregado nos relatórios.</div>`:''}
  ${s.fromHist?`<div class="alert sect">Este mês ainda não tem lançamentos detalhados — os totais vêm do histórico da planilha.</div>`:''}
  <div class="card sect">
   <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:flex-end">
@@ -431,7 +436,7 @@ function drawClients(){
  if(clFilter==='reagendar'){const s=new Set(needSchedule(cs).map(x=>x.c.id));L=L.filter(c=>s.has(c.id))}
  if(clFilter==='aniv')L=L.filter(c=>c.nascimento&&c.nascimento.slice(5,7)===cur.slice(5));
  L.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
- $('cl').innerHTML=L.length?`<table><thead><tr><th>Nome</th><th>Contato</th><th>Última visita</th><th>Próximo</th><th class="num">Visitas</th><th class="num">Total gasto</th><th>Status</th></tr></thead><tbody>${L.map(c=>{const s=cs[c.id]||{};const w=waLink(c.telefone);return`<tr class="click" onclick="clientView('${c.id}')"><td><b>${esc(c.nome)}</b> ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️</span>':''}${c.instagram?`<div class="small muted">${esc(c.instagram)}</div>`:''}</td><td>${w?`<a href="${w}" target="_blank" onclick="event.stopPropagation()">${esc(c.telefone)}</a>`:esc(c.telefone||'')}</td><td>${s.last?`${fd(s.last)}${dDiff(s.last,td)>=0?`<div class="small muted">há ${dDiff(s.last,td)} dias</div>`:''}`:'<span class="muted">—</span>'}</td><td>${s.future?`<span class="pill pink">${fds(s.future)}</span>`:''}</td><td class="num">${s.n||0}</td><td class="num">${BRL(s.total||0)}</td><td><span class="pill ${c.status==='Inativa'?'':'ok'}">${c.status||'Ativa'}</span></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Nenhuma cliente encontrada.</div>';
+ $('cl').innerHTML=L.length?`<table><thead><tr><th>Nome</th><th>Contato</th><th>Última visita</th><th>Próximo</th><th class="num">Visitas</th><th class="num">Total gasto</th><th>Status</th></tr></thead><tbody>${L.map(c=>{const s=cs[c.id]||{};const w=waLink(c.telefone);return`<tr class="click" onclick="clientView('${c.id}')"><td><b>${esc(c.nome)}</b> ${c.alergiaDesc?'<span class="pill bad" title="'+esc(c.alergiaDesc)+'">⚠️</span>':''}${c.instagram?`<div class="small muted">${esc(c.instagram)}</div>`:''}</td><td>${w?`<a href="${w}" target="_blank" onclick="event.stopPropagation()">${esc(c.telefone)}</a>`:esc(c.telefone||'')}</td><td>${s.last?`${fd(s.last)}${dDiff(s.last,td)>=0?`<div class="small muted">há ${dDiff(s.last,td)} dia${dDiff(s.last,td)===1?'':'s'}</div>`:''}`:'<span class="muted">—</span>'}</td><td>${s.future?`<span class="pill pink">${fds(s.future)}</span>`:''}</td><td class="num">${s.n||0}</td><td class="num">${BRL(s.total||0)}</td><td><span class="pill ${c.status==='Inativa'?'':'ok'}">${c.status||'Ativa'}</span></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Nenhuma cliente encontrada.</div>';
 }
 function clientForm(id){
  const c=id?client(id):newClient({});
@@ -584,7 +589,7 @@ function importMovRows(rows,mes){
   const groups=new Map();
   rows.slice(hi+1).forEach((r,ix)=>{const cli=String(r[iC]||'').trim();if(norm(cli)==='cliente')return;const data=pDate(r[iD],fy);if(!data)return;const proc=iP>=0?String(r[iP]||'').trim():'';const val=iV>=0?money(r[iV]):0,ad=iA>=0?money(r[iA]):0;const tb=iT>=0&&String(r[iT]||'').trim()!==''?money(r[iT]):null;if(!proc&&!val&&!tb)return;
    const key=data+'|'+(cli?norm(cli):'#'+ix);let g=groups.get(key);if(!g){g={data,cli,items:[],adicional:0,recebido:0,pag:normPag(r[iPg]),desc:[]};groups.set(key,g)}
-   g.items.push({servico:proc||'Serviço',valor:val});g.adicional+=ad;g.recebido+=tb!==null?tb:val+ad;if(iDs>=0&&String(r[iDs]||'').trim())g.desc.push(String(r[iDs]).trim());if(!g.pag)g.pag=normPag(r[iPg])});
+   g.items.push({servico:canonProc(proc,val||tb,data),valor:val});g.adicional+=ad;g.recebido+=tb!==null?tb:val+ad;if(iDs>=0&&String(r[iDs]||'').trim())g.desc.push(String(r[iDs]).trim());if(!g.pag)g.pag=normPag(r[iPg])});
   groups.forEach(g=>{let c=null;if(g.cli){c=findClient(g.cli);if(!c){c=newClient({nome:g.cli.replace(/\s+/g,' ')});db.clients.push(c);nc++}}
    const nm=c?c.nome:(g.desc[0]||g.items.map(i=>i.servico).join(' + ')||'Avulso');
    const rcv=Math.round(g.recebido*100)/100;if(db.appts.some(a=>(c?a.clientId===c.id:(!a.clientId&&norm(a.cliente)===norm(nm)))&&a.data===g.data&&a.status==='realizado'&&Math.abs(rec(a)-rcv)<.01)){dup++;return}
@@ -620,6 +625,10 @@ async function loadGEvents(){if(!gReady())return gConnect(loadGEvents);try{const
 function importGEvent(id){const e=(gEvents[cur]||[]).find(x=>x.id===id);if(!e)return;const st=e.start.dateTime||e.start.date;const sum=String(e.summary||'').replace(/^💅\s*/,'');const[nome,sv]=sum.split(' — ');const items=(sv||'').split('+').map(s=>s.trim()).filter(Boolean).map(n=>{const s=db.services.find(x=>norm(x.nome)===norm(n));return{servico:s?s.nome:n,valor:s?s.preco:''}});const c=db.clients.find(x=>norm(x.nome)===norm(nome));apptForm(null,{data:st.slice(0,10),hora:e.start.dateTime?st.slice(11,16):'',clientId:c?c.id:'',cliente:(nome||'').trim(),items,gcalId:e.id})}
 
 
+
+const PROC_ALIAS={'padicure tradicional':'Pedicure tradicional','pedicure':'Pedicure tradicional','pedicure tradicional':'Pedicure tradicional','podal russo':'Podal russo','manicure tradicional':'Manicure tradicional','manicure russa':'Manicure russa','mentoria':'Mentoria','mentoria (parcela)':'Mentoria','corrigir':'Reparo de unha','taxa cancelamento':'Taxa de cancelamento','cancelamento':'Taxa de cancelamento','taxa de agendamento':'Taxa de agendamento','workshop':'Workshop','curso on-line':'Curso on-line','curso on-line (parcela)':'Curso on-line','manicure e pedicure':'Manicure e pedicure tradicional','manicure e pedicure tradicional':'Manicure e pedicure tradicional','alongamento':'Alongamento','manutencao':'Manutenção','esmaltacao em gel':'Esmaltação em gel','remocao de gel':'Remoção de gel','cuticulagem russa':'Cuticulagem russa','curso manicure russa':'Curso Manicure Russa','curso alongamento':'Curso Alongamento'};
+function canonProc(p,v,data){const n=norm(p);if(n){if(PROC_ALIAS[n])return PROC_ALIAS[n];const s=db.services.find(x=>norm(x.nome)===n);return s?s.nome:String(p).trim()}
+ v=+v||0;if(!v)return'Serviço';if(v>=140&&v<=180)return'Manicure russa';if(v>=195&&v<=235)return'Alongamento';if(v>=95&&v<=105)return'Esmaltação em gel';if(v>=70&&v<=82&&data>='2025-11')return'Podal russo';if(v>=40&&v<=65)return'Pedicure tradicional';return'Serviço'}
 /* ================= PLANILHA GOOGLE ================= */
 let sheetTabs=null;
 const MNOR=['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
