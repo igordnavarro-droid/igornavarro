@@ -5,6 +5,7 @@ CRM e controle financeiro do **Mentha Nail Design** em um único arquivo (`index
 ## O que tem
 
 - Tema claro com detalhes em verde e a logo da Mentha Nail Spa.
+- **Instalável como app** (PWA): no Chrome do Android, menu ⋮ → *Instalar app*. Abre em tela cheia, com ícone na tela inicial, e funciona offline com os dados salvos no aparelho.
 - **Profissionais** (Thais e Amanda): cada atendimento tem a profissional; filtro Todas/Thais/Amanda no Painel, Agenda, Receitas e Relatórios; cada uma tem a sua agenda no Google.
 - **Painel** no modelo da aba Outubro.26: meta do mês, quanto falta, total bruto faturado, total de gastos e total líquido, além de próximos atendimentos, clientes que precisam reagendar, contas pendentes, aniversariantes e dízimo sugerido.
 - **Agenda**: visões Dia, Semana, Mês e Lista (como o Google Agenda), com filtro de data. Clique num horário vazio para agendar. Tudo o que é criado, concluído ou excluído vai automaticamente para o Google Agenda; se o login do Google tiver expirado, os eventos ficam na fila e são enviados quando você entrar de novo.
