@@ -276,6 +276,7 @@ table.hm td.t{font-weight:700;background:var(--surface2)!important}
 .hm-legend{display:flex;gap:4px;align-items:center;font-size:11.5px;color:var(--muted);margin-top:8px;flex-wrap:wrap}.hm-legend i{width:18px;height:12px;border-radius:3px;display:inline-block}
 details.dt{margin:10px 0 0;border:0;padding:0}details.dt summary{font-size:12.5px;color:var(--muted);font-weight:600}
 details.dt .tw{max-height:320px;overflow:auto;margin-top:6px}
+@media(max-width:760px){.refrow{flex-wrap:wrap}.refrow .grow b{white-space:normal}.refrow input{width:100%!important;flex:1 1 100%!important}}
 ol.steps{padding-left:18px;margin:6px 0}ol.steps li{margin-bottom:6px;font-size:13.5px}
 @media(max-width:820px){.kpis{grid-template-columns:1fr 1fr;gap:10px}.kpi{padding:12px}.kpi .v{font-size:19px}.kpi .s{font-size:11.5px}}
 
@@ -403,7 +404,7 @@ body.noscroll{overflow:hidden}
 <script>
 /* ================= utilidades ================= */
 const KEY='mentha_crm_v1';
-const APP_VERSION='2.1.0';
+const APP_VERSION='2.2.0';
 const $=id=>document.getElementById(id);
 const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4);
 const p2=n=>String(n).padStart(2,'0');
@@ -835,13 +836,13 @@ function clientForm(id){
  <label class="f">Alergias (deixe vazio se não tiver)<input id="cA" value="${esc(c.alergiaDesc)}" placeholder="ex.: diclofenaco, alguns esmaltes"></label>
  <label class="f">Observações<textarea id="cOb">${esc(c.obs)}</textarea></label>`,
  {onSave:()=>{const nome=$('cN').value.trim();if(!nome)return toast('Informe o nome');if(db.clients.some(x=>x.id!==c.id&&norm(x.nome)===norm(nome)))return toast('Já existe uma cliente com esse nome');
-  Object.assign(c,{nome,telefone:$('cT').value.trim(),nascimento:$('cB').value,instagram:$('cI').value.trim(),cpf:$('cCpf').value.trim(),endereco:$('cE').value.trim(),bairro:$('cBa').value.trim(),cidade:$('cCi').value.trim(),profissao:$('cP').value.trim(),status:$('cS').value,origem:$('cO').value.trim(),indicadaPor:$('cIn').value.trim(),diabetes:$('cDi').checked,gestante:$('cGe').checked,alergiaDesc:$('cA').value.trim(),obs:$('cOb').value.trim()});
+  Object.assign(c,{nome,telefone:$('cT').value.trim(),nascimento:$('cB').value,instagram:$('cI').value.trim(),cpf:$('cCpf').value.trim(),endereco:$('cE').value.trim(),bairro:$('cBa').value.trim(),cidade:$('cCi').value.trim(),profissao:$('cP').value.trim(),status:$('cS').value,origem:$('cO').value.trim(),indicadaPor:$('cIn').value.trim(),indicadaPorId:(()=>{const v=$('cIn').value.trim();if(norm(v)===norm(c.indicadaPor)&&c.indicadaPorId)return c.indicadaPorId;const r=db.clients.find(x=>x.id!==c.id&&norm(x.nome)===norm(v));return r?r.id:''})(),diabetes:$('cDi').checked,gestante:$('cGe').checked,alergiaDesc:$('cA').value.trim(),obs:$('cOb').value.trim()});
   if(!id)db.clients.push(c);db.appts.forEach(a=>{if(a.clientId===c.id)a.cliente=c.nome});save();closeModal();render();toast('Cliente salva')},extra:id?`<button class="btn ghost danger" onclick="delClient('${id}')">Excluir</button>`:''});
 }
 function delClient(id){if(!confirm('Excluir esta cliente? Os atendimentos dela ficam no histórico.'))return;const c=client(id);db.appts.forEach(a=>{if(a.clientId===id){a.cliente=c.nome;a.clientId=''}});db.clients=db.clients.filter(x=>x.id!==id);save();closeModal();render()}
 function clientView(id){
  const c=client(id),s=clientStats()[id]||{n:0,total:0},H=db.appts.filter(a=>a.clientId===id).sort(byDT).reverse();
- const w=waLink(c.telefone);const ind=db.clients.filter(x=>norm(x.indicadaPor)===norm(c.nome)||norm(x.indicadaPor)===norm(c.nome.split(' ')[0])&&norm(c.nome.split(' ')[0]).length>3);
+ const w=waLink(c.telefone);const ind=refIndex().by.get(c.id)||[];
  const idade=c.nascimento?Math.floor(dDiff(c.nascimento,todayISO())/365.25):'';
  modal(esc(c.nome),`
  <div class="chips sect">${c.status==='Inativa'?'<span class="pill">Inativa</span>':'<span class="pill ok">Ativa</span>'}${c.alergiaDesc?`<span class="pill bad">⚠️ Alergia: ${esc(c.alergiaDesc)}</span>`:''}${c.diabetes?'<span class="pill warn">Diabetes</span>':''}${c.gestante?'<span class="pill warn">Gestante</span>':''}${c.origem?`<span class="pill">via ${esc(c.origem)}</span>`:''}${c.indicadaPor?`<span class="pill pink">indicada por ${esc(c.indicadaPor)}</span>`:''}</div>
@@ -920,7 +921,8 @@ function rRelatorios(v){
   <div class="card"><h3>💳 Formas de pagamento</h3>${lst(top(pg),o=>BRL(o.v))}</div>
   <div class="card"><h3>🧾 Despesas por tipo</h3>${lst(top(tp),o=>BRL(o.v),'#A8D9C4')}</div>
   <div class="card"><h3>📣 Novas clientes por origem</h3>${lst(top(org),o=>o.v+' cliente'+(o.v>1?'s':''))}${novas.length?`<div class="small muted" style="margin-top:8px">${novas.slice(0,12).map(c=>esc(c.nome)).join(', ')}${novas.length>12?'…':''}</div>`:''}</div>
- </div>`;
+ </div>
+ ${refReport(f,t)}`;
  CH2.draw();
  if(!window.Chart){$('ch1').parentNode.innerHTML='<div class="empty">O gráfico precisa de internet para carregar.</div>';return}
  const cs=getComputedStyle(document.documentElement),c=k=>cs.getPropertyValue(k).trim();
@@ -957,6 +959,37 @@ function chartsPorData(D,g){const labels=D.rows.map(b=>bLabel(b.k,g,true));const
   <div class="card"><h3>👩 Visitas por cliente por ${per} <select class="tinput r" style="width:auto" onchange="hmTop=+this.value;try{localStorage.setItem('mentha_hmtop',hmTop)}catch(e){};render()">${[[10,'Top 10'],[15,'Top 15'],[30,'Top 30'],[0,'Todas']].map(([v,l])=>`<option value="${v}" ${hmTop===v?'selected':''}>${l}</option>`).join('')}</select></h3>${heatmap(D,g)}</div>
  </div>`;
  return{html,draw:()=>{document.querySelectorAll('.hm-wrap').forEach(w=>w.scrollLeft=w.scrollWidth);if(!window.Chart)return['chA','chS','chP'].forEach(id=>{const e=$(id);if(e)e.parentNode.innerHTML='<div class="empty">O gráfico precisa de internet para carregar — veja os dados em tabela abaixo.</div>'});stackChart('chA',labels,byProf,profOrder,profCol);stackChart('chS',labels,bySv,svOrder,sc);stackChart('chP',labels,byPay,payOrder,PAYC)}}}
+
+/* ===== indicações ===== */
+function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;if(!m||!n)return m||n;let p=[...Array(n+1).keys()];for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+const REF_STOP=new Set(['manicure','pastora','dona','sra','senhora','tia','minha','meu','amiga','cliente','da','de','do','dos','das','e']);
+const tokSim=(t,w)=>t===w||(t.length>=4&&w.startsWith(t))||(t.length>=5&&w.length>=5&&lev(t,w)<=1);
+function refCands(txt,selfId){const t=norm(txt).replace(/[^a-z\s]/g,' ').split(/\s+/).filter(x=>x&&!REF_STOP.has(x));if(!t.length)return[];
+ const W=c=>norm(c.nome).replace(/[^a-z\s]/g,' ').split(/\s+/).filter(Boolean);
+ const L=db.clients.filter(c=>{if(c.id===selfId)return false;const w=W(c);if(!w.length)return false;return tokSim(t[0],w[0])&&t.slice(1).every(x=>w.slice(1).some(y=>tokSim(x,y)))});
+ const ex=L.filter(c=>W(c)[0]===t[0]);const R=ex.length?ex:L;
+ if(t.length===1&&PROFS().some(p=>norm(p.nome)===t[0])&&!(R.length===1&&W(R[0]).length===1))return R.length===1?[R[0],{nome:'(a própria profissional)',id:'-'}]:R;
+ return R}
+function refOf(c){if(c.indicadaPorId){const r=client(c.indicadaPorId);if(r)return{r,how:'manual'}}if(!String(c.indicadaPor||'').trim())return null;
+ if(c.indicadaPorId==='-')return{how:'none'};const L=refCands(c.indicadaPor,c.id);if(L.length===1)return{r:L[0],how:'auto'};return{how:L.length?'amb':'unk',cands:L}}
+function refIndex(){const by=new Map(),pend=[],semNome=[];db.clients.forEach(c=>{const x=refOf(c);if(!x){if(/indica/.test(norm(c.origem)))semNome.push(c);return}if(x.r){if(!by.has(x.r.id))by.set(x.r.id,[]);by.get(x.r.id).push(c)}else if(x.how!=='none')pend.push({c,x})});return{by,pend,semNome}}
+function setRef(cid,val){const c=client(cid);if(!c)return;const v=String(val||'').trim();if(v==='-'){c.indicadaPorId='-'}else{const r=db.clients.find(x=>x.id===v)||db.clients.find(x=>norm(x.nome)===norm(v));if(!r)return toast('Escolha uma cliente da lista');if(r.id===c.id)return toast('A cliente não pode indicar a si mesma');c.indicadaPorId=r.id;if(!c.indicadaPor)c.indicadaPor=r.nome;if(!/indica/.test(norm(c.origem)))c.origem=c.origem?c.origem+', Indicação':'Indicação'}save();render();toast('Indicação registrada ✓')}
+let refScope=(()=>{try{return localStorage.getItem('mentha_refscope')||'periodo'}catch(e){return'periodo'}})();
+function refReport(f,t){const{by,pend,semNome}=refIndex(),cs=clientStats(),td=todayISO();
+ const first={};db.appts.forEach(a=>{if(isVisit(a)&&a.clientId&&(!first[a.clientId]||a.data<first[a.clientId]))first[a.clientId]=a.data});
+ const dOf=c=>first[c.id]||c.criadoEm||'';const inP=c=>refScope==='tudo'||(dOf(c)>=f&&dOf(c)<=t);
+ const R=[...by.entries()].map(([id,L])=>{const r=client(id),Lp=L.filter(inP);return{r,L:Lp.sort((a,b)=>dOf(b).localeCompare(dOf(a))),vieram:Lp.filter(c=>(cs[c.id]||{}).n>0).length,receita:Lp.reduce((s,c)=>s+((cs[c.id]||{}).total||0),0),ult:Lp.reduce((m,c)=>dOf(c)>m?dOf(c):m,'')}}).filter(x=>x.r&&x.L.length).sort((a,b)=>b.L.length-a.L.length||b.vieram-a.vieram||b.receita-a.receita||a.r.nome.localeCompare(b.r.nome,'pt-BR'));
+ const medal=i=>['🥇','🥈','🥉'][i]||`${i+1}º`;const tot=R.reduce((s,x)=>s+x.L.length,0);
+ const opts=`<datalist id="dlRef">${db.clients.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(c=>`<option value="${esc(c.nome)}">`).join('')}</datalist>`;
+ const linkRow=(c,extra)=>`<div class="li refrow"><div class="grow"><b>${esc(c.nome)}</b><span class="small muted">${extra}</span></div><input class="tinput" list="dlRef" placeholder="Quem indicou?" style="width:170px;flex:0 0 auto" onchange="setRef('${c.id}',this.value)"></div>`;
+ const msg=x=>`Oi ${x.r.nome.split(' ')[0]}! 💚 Muito obrigada por indicar ${x.L.length} amiga${x.L.length>1?'s':''} para o Mentha Nail Spa! Você é uma das clientes que mais indicaram a gente e preparamos um mimo especial pra você 🎁💅`;
+ return`<div class="card sect"><h3>🏆 Ranking de indicações <span class="r seg" style="font-weight:600">${[['periodo','Período'],['tudo','Todo o histórico']].map(([k,l])=>`<button class="${refScope===k?'on':''}" onclick="refScope='${k}';try{localStorage.setItem('mentha_refscope',refScope)}catch(e){};render()">${l}</button>`).join('')}</span></h3>
+  <div class="small muted" style="margin-bottom:10px">${refScope==='tudo'?'Todas as indicações registradas.':`Clientes indicadas que chegaram entre ${fd(f)} e ${fd(t)} (data da 1ª visita).`} ${tot} indicaç${tot===1?'ão':'ões'} de ${R.length} cliente${R.length===1?'':'s'}. Desempate: mais indicadas que já vieram, depois a maior receita das indicadas.</div>
+  ${R.length?`<div class="tw"><table class="no-rt" style="min-width:640px"><thead><tr><th>#</th><th>Cliente que indicou</th><th class="num">Indicações</th><th class="num">Já vieram</th><th class="num">Receita das indicadas</th><th>Última</th><th></th></tr></thead><tbody>${R.map((x,i)=>{const w=waLink(x.r.telefone,msg(x));return`<tr class="click" onclick="if(!event.target.closest('a,button,summary,details'))clientView('${x.r.id}')"><td style="font-size:${i<3?18:13}px">${medal(i)}</td><td class="wrap"><b>${esc(x.r.nome)}</b><details style="border:0;padding:0;margin:2px 0 0"><summary class="small muted" style="font-weight:500">${x.L.length===1?'1 indicada':`ver as ${x.L.length} indicadas`}</summary><div class="small">${x.L.map(c=>`${esc(c.nome)} <span class="muted">${dOf(c)?fd(dOf(c)):''}${(cs[c.id]||{}).n?'':' · ainda não veio'}</span>`).join('<br>')}</div></details></td><td class="num"><b style="font-size:16px">${x.L.length}</b></td><td class="num">${x.vieram}</td><td class="num">${BRL(x.receita)}</td><td>${x.ult?fd(x.ult):''}</td><td>${i<3&&w?`<a class="btn sm soft" target="_blank" href="${w}">🎁 Parabenizar</a>`:''}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty">Nenhuma indicação no período.</div>'}
+  ${opts}
+  ${pend.length?`<details style="margin-top:12px" open><summary>⚠️ Indicações para confirmar (${pend.length}) — o nome escrito não bate com uma cliente só</summary>${pend.map(({c,x})=>linkRow(c,`indicada por “${esc(c.indicadaPor)}”${x.cands&&x.cands.length?' · pode ser: '+x.cands.slice(0,4).map(r=>`<a href="#" onclick="setRef('${c.id}','${r.id}');return false">${esc(r.nome)}</a>`).join(', '):' · não encontrei essa cliente'} · <a href="#" onclick="setRef('${c.id}','-');return false">ignorar</a>`)).join('')}</details>`:''}
+  ${semNome.length?`<details style="margin-top:10px"><summary>📝 Vieram por indicação, mas sem dizer quem indicou (${semNome.length})</summary><div class="small muted" style="margin:6px 0">Preencha quem indicou para elas entrarem no ranking.</div>${semNome.sort((a,b)=>dOf(b).localeCompare(dOf(a))).map(c=>linkRow(c,dOf(c)?'1ª visita '+fd(dOf(c)):'')).join('')}</details>`:''}
+ </div>`}
 function relGo(k){if(rGroup==='mes'){cur=k;agDate=k+'-01';go('painel')}else{agDate=k;cur=k.slice(0,7);agView=rGroup==='dia'?'dia':'semana';go('agenda')}}
 function exportRel(){const[f,t]=rRange(),g=rGroup,D=periodData(f,t,g);const q=s=>'"'+String(s).replace(/"/g,'""')+'"',n=x=>(+x||0).toFixed(2).replace('.',',');
  const L=[['Período','Atendimentos','Visitas','Clientes','Faturado','Ticket por visita','Gastos','Líquido','Meta'].map(q).join(';'),...D.rows.map(b=>[bLabel(b.k,g),b.n,b.vis,b.ncli,n(b.fat),n(b.vis?b.fat/b.vis:0),n(b.gasto),n(b.lucro),n(b.meta)].map(q).join(';'))];

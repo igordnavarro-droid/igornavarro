@@ -3,6 +3,16 @@
 Cada versão publicada fica marcada no GitHub (aba **Releases**) e pode ser restaurada a qualquer momento.
 A versão em uso aparece no app em **Config → Sobre**.
 
+## V2.2 — 2.2.0 (01/11/2026)
+
+**Ranking de indicações** (Relatórios)
+- Mostra quem mais indicou clientes, com 🥇🥈🥉, número de indicações, quantas indicadas já vieram, a receita gerada pelas indicadas e a data da última indicação. Dá para ver no período escolhido ou em todo o histórico.
+- Botão **🎁 Parabenizar** para as 3 primeiras, com mensagem pronta no WhatsApp.
+- Reconhece a cliente indicadora mesmo com apelido, erro de digitação ou emoji (ex.: "Manicure Camila Fasto" → Camila Fausto).
+- **Indicações para confirmar:** quando o nome bate com mais de uma cliente (ex.: "Gabriela"), basta tocar na cliente certa.
+- **Vieram por indicação sem dizer quem:** lista para preencher quem indicou, para entrar no ranking.
+- A ficha da cliente mostra quem ela indicou com a mesma regra.
+
 ## V2.1 — 2.1.0 (01/11/2026)
 
 **Taxa de cancelamento e falta**
