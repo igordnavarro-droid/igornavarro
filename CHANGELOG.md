@@ -3,6 +3,17 @@
 Cada versão publicada fica marcada no GitHub (aba **Releases**) e pode ser restaurada a qualquer momento.
 A versão em uso aparece no app em **Config → Sobre**.
 
+## V2.1 — 2.1.0 (01/11/2026)
+
+**Taxa de cancelamento e falta**
+- Novo botão **✕ Cancelou/Faltou** nos agendamentos. Ele já sugere a taxa de **50% do valor dos procedimentos**, que pode ser ajustada ou zerada ("Sem taxa"), com a forma de pagamento.
+- Mudar o status para Cancelado ou Faltou no formulário também mostra o campo da taxa.
+- A taxa **entra na receita**: total faturado, Receitas, Relatórios, formas de pagamento e total gasto pela cliente.
+- A taxa **não conta como atendimento nem como visita**. Linhas de "Taxa de cancelamento" vindas da planilha também deixam de contar como atendimento.
+- No Painel e nos Relatórios aparece quanto da receita veio de taxas. A ficha da cliente mostra quantas vezes ela cancelou ou faltou.
+- No Google Agenda, o evento não é apagado: fica marcado com ❌ "cancelou/faltou" e com o horário livre.
+- O percentual da taxa pode ser alterado em **Config → Taxas e parâmetros**.
+
 ## V2 — 2.0.0 (22/10/2026)
 
 **Correções**
